@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="MobileApp.View.AuthPage"
+             x:Name="ThisPage">
+
+    <ContentPage.Resources>
+    </ContentPage.Resources>
+    <Grid Margin="20,0" VerticalOptions="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Image/>
+        <Entry Grid.Row="1" Placeholder="Введите логин"/>
+        <Entry Grid.Row="2" Placeholder="Введите пароль" IsPassword="True"/>
+        <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center">
+            <Button Text="Войти" Command="{Binding LoginCommand}" CommandParameter="{Binding Path=Navigation, Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPage}}}}"/>
+            <Button Text="Отмена"/>
+        </StackLayout>
+    </Grid>
+</ContentPage>
