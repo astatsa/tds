@@ -6,12 +6,12 @@ using Xamarin.Forms;
 
 namespace MobileApp.ViewModel
 {
-    class MainPageViewModel
+    class LoginPageViewModel
     {
         public Command ExitCommand;
-        public Command LoginCommand => new Command<INavigation>(async (n) => 
+        public Command LoginCommand => new Command<INavigation>((n) => 
         {
-            await n.PushModalAsync(new NavigationPage(new OrderPage()));
+            App.Current.MainPage = new NavigationPage(new OrderPage());
         });
     }
 }

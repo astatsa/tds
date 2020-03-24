@@ -12,13 +12,13 @@ namespace MobileApp.View
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class AuthPage : ContentPage
+    public partial class LoginPage : ContentPage
     {
-        public AuthPage()
+        public LoginPage()
         {
             InitializeComponent();
 
-            BindingContext = new MainPageViewModel();
+            BindingContext = new LoginPageViewModel();
         }
     }
 }
