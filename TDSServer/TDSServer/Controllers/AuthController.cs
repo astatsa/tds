@@ -22,7 +22,7 @@ namespace TDSServer.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> Authenticate([FromBody]AuthModel authModel)
         {
             (var user, var token) = await userService.AuthenticateAsync(authModel.Username, authModel.Password);

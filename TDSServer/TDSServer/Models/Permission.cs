@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace TDSServer.Models
 {
-    public class Role : BaseModel
+    public class Permission : BaseModel
     {
         public string Name { get; set; }
         public string FullName { get; set; }
         public string Description { get; set; }
-        public ICollection<UserRole> UserRoles { get; set; }
         public ICollection<RolePermission> RolePermissions { get; set; }
-        public ICollection<PositionRole> PositionRoles { get; set; }
     }
 }

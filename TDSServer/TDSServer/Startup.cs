@@ -52,7 +52,7 @@ namespace TDSServer
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securitySection.Get<SecureSettings>().SecretKey))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(securitySection.Get<SecureSettings>().SecretKey))
                     };
                 });
 
@@ -70,14 +70,15 @@ namespace TDSServer
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             /*app.Use(async (c, n) =>
             {
                 await n.Invoke();
             });*/
-
-            app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

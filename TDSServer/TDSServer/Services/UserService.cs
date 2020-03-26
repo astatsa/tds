@@ -28,22 +28,33 @@ namespace TDSServer.Services
         {
             string passwordHash = GetPasswordHash(password);
             var user = await dbContext.Users
-                .Include(u => u.Role)
+                .Include(u => u.UserRoles)
+                .ThenInclude(x => x.Role)
+                .ThenInclude(x => x.RolePermissions)
+                .ThenInclude(x => x.Permission)
                 .SingleOrDefaultAsync(u => u.Username == username && u.PasswordHash == passwordHash);
             if(user == null)
             {
                 return (null, null);
             }
 
-            byte[] key = Encoding.UTF8.GetBytes(secureSettings.SecretKey);
+            byte[] key = Encoding.ASCII.GetBytes(secureSettings.SecretKey);
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                    new Claim(ClaimTypes.Role, user.Role.Name)
-                }),
+                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                }
+                .Concat(
+                    user.UserRoles?
+                    .SelectMany(
+                        x => x.Role.RolePermissions?
+                        .Select(
+                            q => new Claim(ClaimTypes.Role, q.Permission.Name)
+                         )
+                    )
+                )),
                 Expires = DateTime.UtcNow.AddDays(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             });
