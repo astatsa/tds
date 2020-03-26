@@ -10,6 +10,6 @@ namespace TDSServer.Services
 {
     public interface IUserService
     {
-        string Authenticate(string username, string password);
+        Task<(User User, string Token)> AuthenticateAsync(string username, string password);
     }
 }

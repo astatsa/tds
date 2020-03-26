@@ -23,12 +23,18 @@ namespace TDSServer.Controllers
 
         [AllowAnonymous]
         [HttpPost()]
-        public IActionResult Authenticate([FromBody]AuthModel authModel)
+        public async Task<IActionResult> Authenticate([FromBody]AuthModel authModel)
         {
-            var token = userService.Authenticate(authModel.Username, authModel.Password);
+            (var user, var token) = await userService.AuthenticateAsync(authModel.Username, authModel.Password);
+            
             if (token == null)
-                return BadRequest(new { message = "Username or password is incorrect!" });
-            return Ok(token);
+                return BadRequest("Неверное имя пользователя или пароль!");
+
+            return Ok(new 
+            { 
+                UserFullName = user.FullName,
+                Token = token
+            });
         }
     }
 }

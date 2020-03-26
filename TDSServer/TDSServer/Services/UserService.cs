@@ -24,15 +24,15 @@ namespace TDSServer.Services
             this.dbContext = dbContext;
         }
 
-        public string Authenticate(string username, string password)
+        public async Task<(User User, string Token)> AuthenticateAsync(string username, string password)
         {
             string passwordHash = GetPasswordHash(password);
-            var user = dbContext.Users
+            var user = await dbContext.Users
                 .Include(u => u.Role)
-                .SingleOrDefault(u => u.PasswordHash == passwordHash);
+                .SingleOrDefaultAsync(u => u.Username == username && u.PasswordHash == passwordHash);
             if(user == null)
             {
-                return null;
+                return (null, null);
             }
 
             byte[] key = Encoding.UTF8.GetBytes(secureSettings.SecretKey);
@@ -47,7 +47,7 @@ namespace TDSServer.Services
                 Expires = DateTime.UtcNow.AddDays(3),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             });
-            return tokenHandler.WriteToken(token);
+            return (user, tokenHandler.WriteToken(token));
         }
 
         public static string GetPasswordHash(string password)

@@ -9,19 +9,28 @@
 
     <ContentPage.Resources>
     </ContentPage.Resources>
+    
     <Grid Margin="20,0" VerticalOptions="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Image/>
-        <Entry Grid.Row="1" Placeholder="Введите логин"/>
-        <Entry Grid.Row="2" Placeholder="Введите пароль" IsPassword="True"/>
-        <StackLayout Grid.Row="3" Orientation="Horizontal" HorizontalOptions="Center">
-            <Button Text="Войти" Command="{Binding LoginCommand}" CommandParameter="{Binding Path=Navigation, Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPage}}}}"/>
-            <Button Text="Отмена"/>
-        </StackLayout>
+        <Entry Grid.Row="1" Placeholder="Введите логин" Text="{Binding Username}"/>
+        <Entry Grid.Row="2" Placeholder="Введите пароль" IsPassword="True" Text="{Binding Password}"/>
+        <Label Grid.Row="3" Text="{Binding Message}" TextColor="Red" HorizontalTextAlignment="Center"/>
+        <Button Grid.Row="4" Text="Войти" HorizontalOptions="Fill" Command="{Binding LoginCommand}">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+        <Button Text="Cancel" Command="{Binding CancelCommand}"/>
+        <ActivityIndicator Grid.Row="5" Color="Blue" IsRunning="{Binding IsLoading}"/>
     </Grid>
 </ContentPage>

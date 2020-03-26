@@ -37,7 +37,6 @@ namespace TDSServer
             services.Configure<SecureSettings>(securitySection);
             services.AddDbContext<AppDbContext>(o => o.UseMySql(connString));
 
-
             services.AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -70,6 +69,11 @@ namespace TDSServer
             }
 
             app.UseHttpsRedirection();
+
+            /*app.Use(async (c, n) =>
+            {
+                await n.Invoke();
+            });*/
 
             app.UseRouting();
 
