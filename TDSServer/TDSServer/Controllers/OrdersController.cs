@@ -33,6 +33,9 @@ namespace TDSServer.Controllers
         public async Task<IEnumerable<Order>> GetOrdersByEmployee(int employeeId) => 
             await dbContext.Orders
                 .Where(x => x.DriverId == employeeId)
+                .Include(x => x.Material)
+                .Include(x => x.Supplier)
+                .Include(x => x.Customer)
                 .ToListAsync();
     }
 }

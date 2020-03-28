@@ -4,9 +4,8 @@ using System.Text;
 
 namespace MobileApp.Models
 {
-    class Employee
+    class Employee : BaseModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string FullName { get; set; }
     }

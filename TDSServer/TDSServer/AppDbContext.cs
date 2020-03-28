@@ -106,8 +106,8 @@ namespace TDSServer
             modelBuilder
                 .Entity<CounterpartyType>()
                 .HasData(
-                    new CounterpartyType { Id = 1, Name = Models.CounterpartyTypes.Customer, FullName = "Поставщик" },
-                    new CounterpartyType { Id = 2, Name = Models.CounterpartyTypes.Supplier, FullName = "Покупатель" }
+                    new CounterpartyType { Id = 1, Name = Models.CounterpartyTypes.Supplier, FullName = "Поставщик" },
+                    new CounterpartyType { Id = 2, Name = Models.CounterpartyTypes.Customer, FullName = "Покупатель" }
                 );
 
             //CounterpartyMaterialRest

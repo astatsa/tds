@@ -6,6 +6,20 @@
              mc:Ignorable="d"
              x:Class="MobileApp.App">
     <Application.Resources>
-
+        <OnPlatform x:Key="FuelFont" x:TypeArguments="x:String">
+            <On Platform="iOS" Value="fontello"/>
+            <On Platform="Android" Value="fontello.ttf#fontello"/>
+        </OnPlatform>
+        <x:String x:Key="FuelText">&#xe801;</x:String>
+        <Style TargetType="NavigationPage">
+            <Setter Property="NavigationPage.BarBackgroundColor" Value="White"/>
+        </Style>
+        <Style TargetType="ContentPage">
+            <Setter Property="NavigationPage.TitleView">
+                <Setter.Value>
+                    <Label Text="Test" TextColor="Black"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>

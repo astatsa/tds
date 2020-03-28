@@ -9,12 +9,19 @@
     <ContentPage.BindingContext>
         <local:OrderPageViewModel/>
     </ContentPage.BindingContext>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+    <ContentPage.Resources>
+        <Style x:Key="HeaderLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="Medium"/>
+        </Style>
+        <Style x:Key="DataLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="Medium"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+    </ContentPage.Resources>
+    <RelativeLayout>
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" 
+                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1}"
+                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=1}">
             <ListView x:Name="MyListView"
                     ItemsSource="{Binding Orders}"
                     ItemTapped="Handle_ItemTapped"
@@ -22,19 +29,46 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Spacing="5" Margin="10,0">
-                                <StackLayout.Resources>
-                                    <Style TargetType="Label">
-                                        <Setter Property="FontSize" Value="Medium"/>
-                                    </Style>
-                                </StackLayout.Resources>
-                                <Label Text="{Binding Id}"/>
-                                <Label Text="{Binding Date}"/>
-                            </StackLayout>
+                            <Grid Margin="10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Text="Откуда:" Style="{StaticResource HeaderLabel}"/>
+                                <Label Grid.Column="1" Text="{Binding Supplier.Name}" Style="{StaticResource DataLabel}"/>
+                                <Label Grid.Row="1" Text="Куда:" Style="{StaticResource HeaderLabel}"/>
+                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Customer.Name}" Style="{StaticResource DataLabel}"/>
+                                <Label Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource DataLabel}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Material.Name}"/>
+                                            <Span Text=" "/>
+                                            <Span Text="{Binding Volume}"/>
+                                            <!--<Span Text="{Binding Material.Measure.Name}"/>-->
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Grid>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </RefreshView>
-    </Grid>
+        <Button 
+            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
+            RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Constant=-80}"
+            CornerRadius="30"
+            HeightRequest="60"
+            WidthRequest="60"
+            FontFamily="{StaticResource FuelFont}"
+            Text="{StaticResource FuelText}"
+            BackgroundColor="#FFD740"
+            TextColor="Black"
+            FontSize="Large"/>
+    </RelativeLayout>
 </ContentPage>
