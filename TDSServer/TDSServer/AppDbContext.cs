@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,17 @@ namespace TDSServer
         public DbSet<PositionRole> PositionRoles { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Permission> Permissions { get; set; }
-        public DbSet<RolePermission> RolePermissions { get; set; } 
+        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Measure> Measures { get; set; }
+        public DbSet<Material> Materials { get; set; }
+        public DbSet<Counterparty> Counterparties { get; set; }
+        public DbSet<CounterpartyType> CounterpartyTypes { get; set; }
+        public DbSet<CounterpartyMaterialRest> CounterpartyMaterialRests { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderState> OrderStates { get; set; }
+        public DbSet<GasStation> GasStations { get; set; }
+        public DbSet<Refuel> Refuels { get; set; }
+        public DbSet<OrderStateHistory> OrderStateHistories { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
@@ -37,18 +48,20 @@ namespace TDSServer
                 new Role { Id = 2, Name = "Driver", FullName = "Водитель" }
             };
 
+            //Permission
             modelBuilder
                 .Entity<Permission>()
                 .HasData(permissions);
 
+            //Role
             modelBuilder
                 .Entity<Role>()
                 .HasData(roles);
 
+            //RolePermission
             modelBuilder
                 .Entity<RolePermission>()
                 .HasKey(k => new { k.PermissionId, k.RoleId });
-
             modelBuilder
                 .Entity<RolePermission>()
                 .HasData(
@@ -57,6 +70,7 @@ namespace TDSServer
                     .Join(permissions, k => 1, k => 1, (r, p) => new RolePermission { RoleId = r.Id, PermissionId = p.Id })
                 );
 
+            //User
             modelBuilder
                 .Entity<User>()
                 .HasData(
@@ -69,13 +83,63 @@ namespace TDSServer
                     }
                 );
 
+            //UserRole
             modelBuilder
                 .Entity<UserRole>()
                 .HasKey(x => new { x.UserId, x.RoleId });
+            modelBuilder
+                .Entity<UserRole>()
+                .HasData(
+                    new UserRole { RoleId = 1, UserId = 1 }
+                );
 
+            //PrositionRole
             modelBuilder
                 .Entity<PositionRole>()
                 .HasKey(x => new { x.PositionId, x.RoleId });
+
+            //CounterpatyType
+            modelBuilder
+                .Entity<CounterpartyType>()
+                .Property(e => e.Name)
+                .HasConversion(new EnumToStringConverter<CounterpartyTypes>());
+            modelBuilder
+                .Entity<CounterpartyType>()
+                .HasData(
+                    new CounterpartyType { Id = 1, Name = Models.CounterpartyTypes.Customer, FullName = "Поставщик" },
+                    new CounterpartyType { Id = 2, Name = Models.CounterpartyTypes.Supplier, FullName = "Покупатель" }
+                );
+
+            //CounterpartyMaterialRest
+            modelBuilder
+                .Entity<CounterpartyMaterialRest>()
+                .HasKey(x => new { x.CounterpartyId, x.MaterialId });
+
+            //Order
+            modelBuilder
+                .Entity<Order>()
+                .Property(x => x.DateCreate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+
+            //OrderState
+            modelBuilder
+                .Entity<OrderState>()
+                .Property(x => x.Name)
+                .HasConversion(new EnumToStringConverter<OrderStates>());
+            modelBuilder
+                .Entity<OrderState>()
+                .HasData(
+                    new OrderState { Id = 1, Name = Models.OrderStates.New, FullName = "Новый" },
+                    new OrderState { Id = 2, Name = Models.OrderStates.Viewed, FullName = "Просмотрен" },
+                    new OrderState { Id = 3, Name = Models.OrderStates.Loaded, FullName = "Погрузка произведена" },
+                    new OrderState { Id = 4, Name = Models.OrderStates.Completed, FullName = "Завершен" }
+                );
+
+            //Employee
+            modelBuilder
+                .Entity<Employee>()
+                .HasOne(x => x.User)
+                .WithOne(x => x.Employee);
 
             base.OnModelCreating(modelBuilder);
         }

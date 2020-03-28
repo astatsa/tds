@@ -3,6 +3,7 @@ using MobileApp.View;
 using Refit;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,22 +63,18 @@ namespace MobileApp.ViewModel
             }
         }
 
-        private CancellationTokenSource cts;
-        public Command CancelCommand => new Command(() =>
-        {
-            cts.Cancel();
-        });
-
         public Command LoginCommand => new Command(async () => 
         {
             IsLoading = true;
             Message = "";
 
-            var rest = RestService.For<ITdsApi>(new System.Net.Http.HttpClient()
-            {
-                BaseAddress = new Uri("http://192.168.1.2:8099"),
-                Timeout = TimeSpan.FromMilliseconds(10000)
-            });
+            var rest = RestService.For<ITdsApi>(
+                new System.Net.Http.HttpClient(new ApiMessageHandler(new HttpClientHandler(), () => SessionContext.Token))
+                {
+                    BaseAddress = new Uri(Settings.ServerUrl),
+                    Timeout = TimeSpan.FromMilliseconds(Settings.TimeoutMs),
+                });
+            SessionContext.Api = rest;
             try
             {
                 var authResult = await rest.Auth(new { Username, Password });
@@ -86,6 +83,8 @@ namespace MobileApp.ViewModel
                     Message = "Ошибка авторизации!";
                     return;
                 }
+                SessionContext.Employee = authResult.Employee;
+                SessionContext.Token = authResult.Token;
             }
             catch (Refit.ApiException apiEx) when (apiEx.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
@@ -101,7 +100,6 @@ namespace MobileApp.ViewModel
             {
                 IsLoading = false;
             }
-
             App.Current.MainPage = new NavigationPage(new OrderPage());
         });
 

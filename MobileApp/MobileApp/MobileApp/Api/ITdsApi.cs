@@ -13,5 +13,8 @@ namespace MobileApp.Api
     {
         [Post("/api/auth")]
         Task<AuthResult> Auth([Body]object authModel);//, CancellationToken cancellationToken);
+
+        [Get("/api/orders/employee/{employee.Id}")]
+        Task<ICollection<Order>> GetOrders(Employee employee);
     }
 }

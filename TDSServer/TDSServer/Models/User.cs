@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TDSServer.Models
 {
@@ -7,6 +8,8 @@ namespace TDSServer.Models
         public string Username { get; set; }
         public string FullName { get; set; }
         public string PasswordHash { get; set; }
+        [JsonIgnore]
         public ICollection<UserRole> UserRoles { get; set; }
+        public Employee Employee { get; set; }
     }
 }

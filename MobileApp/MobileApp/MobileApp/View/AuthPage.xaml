@@ -30,7 +30,6 @@
                 </DataTrigger>
             </Button.Triggers>
         </Button>
-        <Button Text="Cancel" Command="{Binding CancelCommand}"/>
         <ActivityIndicator Grid.Row="5" Color="Blue" IsRunning="{Binding IsLoading}"/>
     </Grid>
 </ContentPage>

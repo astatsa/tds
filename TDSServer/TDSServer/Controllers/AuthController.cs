@@ -32,8 +32,8 @@ namespace TDSServer.Controllers
 
             return Ok(new 
             { 
-                UserFullName = user.FullName,
-                Token = token
+                Token = token,
+                Employee = user.Employee
             });
         }
     }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace MobileApp.Models
 {
-    class AuthResult
+    class Order
     {
-        public string Token { get; set; }
-        public Employee Employee { get; set; }
+        public int Id { get; set; }
+        public DateTime Date { get; set; }
     }
 }
