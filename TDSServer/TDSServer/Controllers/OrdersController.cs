@@ -21,21 +21,39 @@ namespace TDSServer.Controllers
             this.dbContext = dbContext;
         }
 
-        [HttpGet("{id}")]
-        [Authorize(Roles = "OrderRead")]
-        public IActionResult GetOrder(int id)
-        {
-            return Ok(new { OrderId = id, Material = "Sand", Volume = "10" });
-        }
-
         [HttpGet("employee/{employeeId}")]
         [Authorize(Roles = "OrderRead")]
-        public async Task<IEnumerable<Order>> GetOrdersByEmployee(int employeeId) => 
-            await dbContext.Orders
+        public async Task<ApiResult<IEnumerable<Order>>> GetOrdersByEmployee(int employeeId) => 
+            new ApiResult<IEnumerable<Order>>
+            {
+                Result = await dbContext.Orders
                 .Where(x => x.DriverId == employeeId)
                 .Include(x => x.Material)
                 .Include(x => x.Supplier)
                 .Include(x => x.Customer)
-                .ToListAsync();
+                .ToListAsync()
+            };
+
+        [HttpGet("current")]
+        [Authorize(Roles = "OrderRead")]
+        public async Task<ApiResult<Order>> GetDriverCurrentOrder()
+        {
+            if(int.TryParse(HttpContext.User.Identity.Name, out int userId))
+            {
+                var order = await dbContext
+                    .Orders
+                    .Include(x => x.OrderState)
+                    .Include(x => x.Driver)
+                    .Include(x => x.Supplier)
+                    .Include(x => x.Customer)
+                    .Include(x => x.Material)
+                    .ThenInclude(x => x.Measure)
+                    .Where(x => x.OrderState.Name != OrderStates.Completed && x.Driver != null && x.Driver.UserId == userId)
+                    .OrderByDescending(x => x.Number)
+                    .FirstOrDefaultAsync();
+                return new ApiResult<Order>(order);
+            }
+            return new ApiResult<Order>(default, "Не удалось определить идентификатор пользователя!");
+        }
     }
 }

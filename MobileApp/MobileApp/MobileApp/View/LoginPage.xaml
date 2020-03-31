@@ -5,7 +5,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="MobileApp.View.LoginPage"
-             x:Name="ThisPage">
+             x:Name="ThisPage"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True">
 
     <ContentPage.Resources>
     </ContentPage.Resources>
@@ -23,13 +25,7 @@
         <Entry Grid.Row="1" Placeholder="Введите логин" Text="{Binding Username}"/>
         <Entry Grid.Row="2" Placeholder="Введите пароль" IsPassword="True" Text="{Binding Password}"/>
         <Label Grid.Row="3" Text="{Binding Message}" TextColor="Red" HorizontalTextAlignment="Center"/>
-        <Button Grid.Row="4" Text="Войти" HorizontalOptions="Fill" Command="{Binding LoginCommand}">
-            <Button.Triggers>
-                <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
-                    <Setter Property="IsEnabled" Value="False"/>
-                </DataTrigger>
-            </Button.Triggers>
-        </Button>
+        <Button Grid.Row="4" Text="Войти" HorizontalOptions="Fill" Command="{Binding LoginCommand}"/>
         <ActivityIndicator Grid.Row="5" Color="Blue" IsRunning="{Binding IsLoading}"/>
     </Grid>
 </ContentPage>

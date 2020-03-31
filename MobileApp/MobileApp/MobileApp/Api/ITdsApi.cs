@@ -11,10 +11,13 @@ namespace MobileApp.Api
     [Headers("Content-type: application/json", "Accept: application/json")]
     interface ITdsApi
     {
-        [Post("/api/auth")]
+        [Post("/auth")]
         Task<AuthResult> Auth([Body]object authModel);//, CancellationToken cancellationToken);
 
-        [Get("/api/orders/employee/{employee.Id}")]
-        Task<ICollection<Order>> GetOrders(Employee employee);
+        [Get("/orders/employee/{employee.Id}")]
+        Task<ApiResult<ICollection<Order>>> GetOrders(Employee employee);
+
+        [Get("/orders/current")]
+        Task<ApiResult<Order>> GetCurrentOrder();
     }
 }

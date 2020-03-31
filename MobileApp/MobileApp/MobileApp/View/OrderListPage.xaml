@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:MobileApp.ViewModel"
+             mc:Ignorable="d"
+             x:Class="MobileApp.View.OrderListPage"
+             xmlns:prism="http://prismlibrary.com"
+             prism:ViewModelLocator.AutowireViewModel="True">
+    <ContentPage.Resources>
+        <Style x:Key="HeaderLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="Medium"/>
+        </Style>
+        <Style x:Key="DataLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="Medium"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <RelativeLayout>
+            <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" 
+                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1}"
+                         RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=1}">
+                <ListView x:Name="MyListView"
+                        ItemsSource="{Binding Orders}"
+                        ItemTapped="Handle_ItemTapped"
+                        CachingStrategy="RecycleElement" HasUnevenRows="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid Margin="10,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Label Text="Откуда:" Style="{StaticResource HeaderLabel}"/>
+                                    <Label Grid.Column="1" Text="{Binding Supplier.Name}" Style="{StaticResource DataLabel}"/>
+                                    <Label Grid.Row="1" Text="Куда:" Style="{StaticResource HeaderLabel}"/>
+                                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Customer.Name}" Style="{StaticResource DataLabel}"/>
+                                    <Label Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource DataLabel}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Material.Name}"/>
+                                                <Span Text=" "/>
+                                                <Span Text="{Binding Volume}"/>
+                                                <!--<Span Text="{Binding Material.Measure.Name}"/>-->
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </RefreshView>
+            <!--<Button 
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
+                RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Constant=-80}"
+                CornerRadius="30"
+                HeightRequest="60"
+                WidthRequest="60"
+                FontFamily="{StaticResource FuelFont}"
+                Text="{StaticResource FuelText}"
+                BackgroundColor="#FFD740"
+                TextColor="Black"
+                FontSize="Large"/>-->
+            <Button Style="{StaticResource FuelButton}"/>
+        </RelativeLayout>
+    </ContentPage.Content>
+</ContentPage>

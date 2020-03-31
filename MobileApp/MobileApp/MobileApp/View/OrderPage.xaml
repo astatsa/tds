@@ -3,72 +3,76 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:MobileApp.ViewModel"
              mc:Ignorable="d"
-             x:Class="MobileApp.View.OrderPage">
-    <ContentPage.BindingContext>
-        <local:OrderPageViewModel/>
-    </ContentPage.BindingContext>
-    <ContentPage.Resources>
-        <Style x:Key="HeaderLabel" TargetType="Label">
-            <Setter Property="FontSize" Value="Medium"/>
-        </Style>
-        <Style x:Key="DataLabel" TargetType="Label">
-            <Setter Property="FontSize" Value="Medium"/>
-            <Setter Property="FontAttributes" Value="Bold"/>
-        </Style>
-    </ContentPage.Resources>
-    <RelativeLayout>
-        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}" 
-                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width,Factor=1}"
-                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height,Factor=1}">
-            <ListView x:Name="MyListView"
-                    ItemsSource="{Binding Orders}"
-                    ItemTapped="Handle_ItemTapped"
-                    CachingStrategy="RecycleElement" HasUnevenRows="True">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid Margin="10,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Label Text="Откуда:" Style="{StaticResource HeaderLabel}"/>
-                                <Label Grid.Column="1" Text="{Binding Supplier.Name}" Style="{StaticResource DataLabel}"/>
-                                <Label Grid.Row="1" Text="Куда:" Style="{StaticResource HeaderLabel}"/>
-                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Customer.Name}" Style="{StaticResource DataLabel}"/>
-                                <Label Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource DataLabel}">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="{Binding Material.Name}"/>
-                                            <Span Text=" "/>
-                                            <Span Text="{Binding Volume}"/>
-                                            <!--<Span Text="{Binding Material.Measure.Name}"/>-->
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </RefreshView>
-        <Button 
-            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"
-            RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Constant=-80}"
-            CornerRadius="30"
-            HeightRequest="60"
-            WidthRequest="60"
-            FontFamily="{StaticResource FuelFont}"
-            Text="{StaticResource FuelText}"
-            BackgroundColor="#FFD740"
-            TextColor="Black"
-            FontSize="Large"/>
-    </RelativeLayout>
+             xmlns:vm="clr-namespace:MobileApp.ViewModel"
+             xmlns:prism="http://prismlibrary.com"
+             x:Class="MobileApp.View.OrderPage"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             Title="Текущая заявка"
+             Style="{StaticResource CustPage}">
+    <ContentPage.Content>
+        <RelativeLayout>
+            <RefreshView RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                         IsRefreshing="{Binding IsRefreshing}"
+                         Command="{Binding RefreshCommand}">
+                <ScrollView>
+                    <Grid BindingContext="{Binding Order}" Margin="10,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Text="Дата:" Style="{StaticResource TextLabel}"/>
+                        <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy}'}"
+                               Grid.Column="1"
+                               Style="{StaticResource SecondaryDataText}"/>
+                        <Label Text="Откуда:" 
+                               Grid.Row="1"
+                               Style="{StaticResource TextLabel}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               Style="{StaticResource PrimaryDataText}"
+                               Text="{Binding Supplier.Name}"/>
+                        <Label Grid.Row="2"
+                               Grid.Column="1"
+                               Text="{Binding Supplier.Address}"
+                               Style="{StaticResource SecondaryDataText}"/>
+                        <Label Text="Куда:"
+                               Grid.Row="3"
+                               Style="{StaticResource TextLabel}"/>
+                        <Label Grid.Row="3" Grid.Column="1"
+                               Text="{Binding Customer.Name}"
+                               Style="{StaticResource PrimaryDataText}"/>
+                        <Label Grid.Row="4"
+                               Grid.Column="1"
+                               Text="{Binding Customer.Address}"
+                               Style="{StaticResource SecondaryDataText}"/>
+                        <Label Grid.Row="5" Grid.ColumnSpan="2"
+                               Style="{StaticResource PrimaryDataText}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Material}"/>
+                                    <Span Text="{Binding Volume, StringFormat=' {0}'}"/>
+                                    <Span Text="{Binding Material.Measure}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Button Text="Загрузка завершена"
+                                FontSize="Medium"
+                                Grid.Row="6" 
+                                Grid.ColumnSpan="2"/>
+                    </Grid>
+                </ScrollView>
+            </RefreshView>
+            <Button Style="{StaticResource FuelButton}"/>
+        </RelativeLayout>
+    </ContentPage.Content>
 </ContentPage>

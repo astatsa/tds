@@ -17,8 +17,6 @@ namespace MobileApp.View
         public LoginPage()
         {
             InitializeComponent();
-
-            BindingContext = new LoginPageViewModel();
         }
     }
 }

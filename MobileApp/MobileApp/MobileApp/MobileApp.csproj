@@ -11,18 +11,29 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Prism.Forms" Version="7.2.0.1422" />
+    <PackageReference Include="Prism.Unity.Forms" Version="7.2.0.1422" />
     <PackageReference Include="Refit" Version="5.1.27" />
-    <PackageReference Include="Xamarin.Forms" Version="4.5.0.396" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
+    <PackageReference Include="Xamarin.Forms" Version="4.5.0.495" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.5.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\AuthPage.xaml.cs">
-      <DependentUpon>AuthPage.xaml</DependentUpon>
+    <Compile Update="View\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="View\OrderListPage.xaml.cs">
+      <DependentUpon>OrderListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="View\OrderPage.xaml.cs">
+      <DependentUpon>OrderPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="View\OrderListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="View\OrderPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>

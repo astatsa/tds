@@ -1,5 +1,6 @@
 ﻿using MobileApp.Api;
 using MobileApp.View;
+using Prism.Commands;
 using Refit;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace MobileApp.ViewModel
@@ -52,7 +54,6 @@ namespace MobileApp.ViewModel
         }
 
         private bool isLoading;
-
         public bool IsLoading
         {
             get => isLoading;
@@ -63,48 +64,47 @@ namespace MobileApp.ViewModel
             }
         }
 
-        public Command LoginCommand => new Command(async () => 
-        {
-            IsLoading = true;
-            Message = "";
-
-            var rest = RestService.For<ITdsApi>(
-                new System.Net.Http.HttpClient(new ApiMessageHandler(new HttpClientHandler(), () => SessionContext.Token))
-                {
-                    BaseAddress = new Uri(Settings.ServerUrl),
-                    Timeout = TimeSpan.FromMilliseconds(Settings.TimeoutMs),
-                });
-            SessionContext.Api = rest;
-            try
+        public ICommand LoginCommand => new DelegateCommand(async () => 
             {
-                var authResult = await rest.Auth(new { Username, Password });
-                if (String.IsNullOrWhiteSpace(authResult.Token))
+                IsLoading = true;
+                Message = "";
+
+                try
                 {
-                    Message = "Ошибка авторизации!";
+                    var authResult = await api.Auth(new { Username, Password });
+                    if (String.IsNullOrWhiteSpace(authResult.Token))
+                    {
+                        Message = "Ошибка авторизации!";
+                        return;
+                    }
+                    SessionContext.Employee = authResult.Employee;
+                    SessionContext.Token = authResult.Token;
+                }
+                catch (Refit.ApiException apiEx) when (apiEx.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Message = apiEx.Content ?? apiEx.Message;
                     return;
                 }
-                SessionContext.Employee = authResult.Employee;
-                SessionContext.Token = authResult.Token;
-            }
-            catch (Refit.ApiException apiEx) when (apiEx.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                Message = apiEx.Content ?? apiEx.Message;
-                return;
-            }
-            catch(Exception ex)
-            {
-                Message = ex.Message;
-                return;
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-            App.Current.MainPage = new NavigationPage(new OrderPage());
-        });
+                catch(Exception ex)
+                {
+                    Message = ex.Message;
+                    return;
+                }
+                finally
+                {
+                    IsLoading = false;
+                }
+                App.Current.MainPage = new NavigationPage(new OrderPage());
+            },
+            () => !IsLoading && !String.IsNullOrEmpty(Username))
+            .ObservesProperty(() => IsLoading)
+            .ObservesProperty(() => Username);
 
-        public LoginPageViewModel()
+        public LoginPageViewModel(ITdsApi tdsApi)
         {
+            this.api = tdsApi;
         }
+
+        private readonly ITdsApi api;
     }
 }

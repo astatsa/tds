@@ -10,6 +10,5 @@ namespace MobileApp
     {
         public static string Token { get; set; }
         public static Employee Employee { get; set; }
-        public static ITdsApi Api { get; set; }
     }
 }

@@ -1,73 +1,73 @@
 ﻿using MobileApp.Models;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 using Xamarin.Forms;
+using MobileApp.Api;
+using System.Windows.Input;
+using Prism.Commands;
 
 namespace MobileApp.ViewModel
 {
-    class OrderPageViewModel : BindableObject
+    class OrderPageViewModel : BindableBase
     {
-        private ObservableCollection<Order> orders;
-        public ObservableCollection<Order> Orders 
-        { 
-            get => orders; 
-            private set
-            {
-                orders = value;
-                OnPropertyChanged();
-            }
+        private Order order;
+        public Order Order
+        {
+            get => order;
+            set => SetProperty(ref order, value);
         }
 
         private bool isRefreshing;
         public bool IsRefreshing
         {
             get => isRefreshing;
-            set 
-            {
-                if (isRefreshing != value)
-                {
-                    isRefreshing = value;
-                    OnPropertyChanged();
-                }
-            }
+            set => SetProperty(ref isRefreshing, value);
         }
 
-        private string message; 
+        private string message;
         public string Message
         {
             get => message;
-            set 
-            {
-                if (message != value)
-                {
-                    message = value;
-                    OnPropertyChanged();
-                }
-            }
+            set => SetProperty(ref message, value);
         }
 
-        public Command RefreshCommand => new Command(async () =>
-        {
-            IsRefreshing = true;
-            try
-            {
-                Orders = new ObservableCollection<Order>(await SessionContext.Api.GetOrders(SessionContext.Employee));
-            }
-            catch (Exception ex)
-            {
-                Message = ex.Message;
-            }
-            finally
-            {
-                IsRefreshing = false;
-            }
-        });
 
-        public OrderPageViewModel()
+        public ICommand RefreshCommand => new DelegateCommand
+            (async () =>
+            {
+                IsRefreshing = true;
+                try
+                {
+                    var result = await api.GetCurrentOrder();
+                    if (result.Error != null)
+                    {
+                        Message = result.Error;
+                        return;
+                    }
+
+                    Order = result.Result;
+                }
+                catch(Exception ex)
+                {
+                    Message = ex.Message;
+                }
+                finally
+                {
+                    IsRefreshing = false;
+                }
+            },
+            () => !IsRefreshing)
+            .ObservesProperty(() => IsRefreshing);
+
+        public OrderPageViewModel(ITdsApi tdsApi)
         {
+            this.api = tdsApi;
+
             RefreshCommand.Execute(null);
         }
+
+        private ITdsApi api;
     }
 }
