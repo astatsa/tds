@@ -4,12 +4,20 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             xmlns:vm="clr-namespace:MobileApp.ViewModel"
              xmlns:prism="http://prismlibrary.com"
+             xmlns:conv="clr-namespace:MobileApp.Converters"
              x:Class="MobileApp.View.OrderPage"
              prism:ViewModelLocator.AutowireViewModel="True"
              Title="Текущая заявка"
              Style="{StaticResource CustPage}">
+    <ContentPage.Resources>
+        <x:Array x:Key="ButtonStateAliases" Type="{x:Type x:String}">
+            <x:String>Просмотрен</x:String>
+            <x:String>Загружен</x:String>
+            <x:String>Выгружен</x:String>
+            <x:String></x:String>
+        </x:Array>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <RelativeLayout>
             <RefreshView RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
@@ -17,7 +25,7 @@
                          IsRefreshing="{Binding IsRefreshing}"
                          Command="{Binding RefreshCommand}">
                 <ScrollView>
-                    <Grid BindingContext="{Binding Order}" Margin="10,0">
+                    <Grid Margin="10,10,10,0" IsVisible="{Binding Order, Mode=OneWay, Converter={conv:NullToBoolConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -32,7 +40,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Label Text="Дата:" Style="{StaticResource TextLabel}"/>
-                        <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy}'}"
+                        <Label Text="{Binding Order.Date, StringFormat='{0:dd.MM.yyyy}'}"
                                Grid.Column="1"
                                Style="{StaticResource SecondaryDataText}"/>
                         <Label Text="Откуда:" 
@@ -40,39 +48,48 @@
                                Style="{StaticResource TextLabel}"/>
                         <Label Grid.Row="1" Grid.Column="1"
                                Style="{StaticResource PrimaryDataText}"
-                               Text="{Binding Supplier.Name}"/>
+                               Text="{Binding Order.Supplier.Name}"/>
                         <Label Grid.Row="2"
                                Grid.Column="1"
-                               Text="{Binding Supplier.Address}"
+                               Text="{Binding Order.Supplier.Address}"
                                Style="{StaticResource SecondaryDataText}"/>
                         <Label Text="Куда:"
                                Grid.Row="3"
                                Style="{StaticResource TextLabel}"/>
                         <Label Grid.Row="3" Grid.Column="1"
-                               Text="{Binding Customer.Name}"
+                               Text="{Binding Order.Customer.Name}"
                                Style="{StaticResource PrimaryDataText}"/>
                         <Label Grid.Row="4"
                                Grid.Column="1"
-                               Text="{Binding Customer.Address}"
+                               Text="{Binding Order.Customer.Address}"
                                Style="{StaticResource SecondaryDataText}"/>
                         <Label Grid.Row="5" Grid.ColumnSpan="2"
                                Style="{StaticResource PrimaryDataText}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="{Binding Material}"/>
-                                    <Span Text="{Binding Volume, StringFormat=' {0}'}"/>
-                                    <Span Text="{Binding Material.Measure}"/>
+                                    <Span Text="{Binding Order.Material}"/>
+                                    <Span Text="{Binding Order.Volume, StringFormat=' {0}'}"/>
+                                    <Span Text="{Binding Order.Material.Measure}"/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
-                        <Button Text="Загрузка завершена"
-                                FontSize="Medium"
+                        <Button FontSize="Medium"
                                 Grid.Row="6" 
-                                Grid.ColumnSpan="2"/>
+                                Grid.ColumnSpan="2"
+                                Command="{Binding ChangeStateCommand}"
+                                HeightRequest="60">
+                            <Button.Text>
+                                <Binding Path="Order.OrderState.Name">
+                                    <Binding.Converter>
+                                        <conv:OrderStateToTextConverter StateAliases="{StaticResource ButtonStateAliases}"/>
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.Text>
+                        </Button>
                     </Grid>
                 </ScrollView>
             </RefreshView>
-            <Button Style="{StaticResource FuelButton}"/>
+            <Button Style="{StaticResource FuelButton}" Command="{Binding RefuelAddCommand}"/>
         </RelativeLayout>
     </ContentPage.Content>
 </ContentPage>

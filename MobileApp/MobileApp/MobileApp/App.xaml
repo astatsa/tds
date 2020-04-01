@@ -23,12 +23,10 @@
         <Style x:Key="CustPage" TargetType="ContentPage">
             <Setter Property="NavigationPage.TitleView">
                 <Setter.Value>
-                    <Frame>
-                        <Label Text="{Binding Path=Title, Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPage}}}" 
-                               TextColor="{StaticResource TextColor}"
-                               FontSize="Large">
-                        </Label>
-                    </Frame>
+                    <Label Text="{Binding Path=Title, Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPage}}}" 
+                            TextColor="{StaticResource TextColor}"
+                            FontSize="Large">
+                    </Label>
                 </Setter.Value>
             </Setter>
         </Style>

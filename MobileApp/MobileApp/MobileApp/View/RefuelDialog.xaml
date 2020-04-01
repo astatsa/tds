@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Frame xmlns="http://xamarin.com/schemas/2014/forms" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+		xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+		x:Class="MobileApp.View.RefuelDialog"
+		xmlns:prism="http://prismlibrary.com"
+		BackgroundColor="White"
+		prism:DialogLayout.RelativeWidthRequest="0.75"
+		prism:DialogLayout.CloseOnBackgroundTapped="True"
+	    Padding="10"
+        CornerRadius="2">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Text="Выберите АЗС:"
+			   />
+        <Picker Grid.Row="1"
+				ItemsSource="{Binding GasStations}" 
+				ItemDisplayBinding="{Binding Name}"/>
+        <Label Grid.Row="2"
+			   Text="Введите объем:"/>
+        <Entry Grid.Row="3"
+			   Keyboard="Numeric"/>
+        <StackLayout Grid.Row="4" Orientation="Horizontal" HorizontalOptions="Center">
+            <Button Text="OK"/>
+            <Button Text="Отмена"/>
+        </StackLayout>
+    </Grid>
+</Frame>

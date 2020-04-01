@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace TDSServer.Models
 {
@@ -15,9 +16,11 @@ namespace TDSServer.Models
 
     public class OrderState : BaseModel
     {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public OrderStates Name { get; set; }
         public string FullName { get; set; }
         public string Description { get; set; }
+        [JsonIgnore]
         public ICollection<Order> Orders { get; set; }
     }
 }

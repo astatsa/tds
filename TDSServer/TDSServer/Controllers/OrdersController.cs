@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDSServer.Models;
+using TDSServer.Services;
 
 namespace TDSServer.Controllers
 {
@@ -15,7 +16,7 @@ namespace TDSServer.Controllers
     [Authorize]
     public class OrdersController : ControllerBase
     {
-        private AppDbContext dbContext;
+        private readonly AppDbContext dbContext;
         public OrdersController(AppDbContext dbContext)
         {
             this.dbContext = dbContext;
@@ -54,6 +55,33 @@ namespace TDSServer.Controllers
                 return new ApiResult<Order>(order);
             }
             return new ApiResult<Order>(default, "Не удалось определить идентификатор пользователя!");
+        }
+
+        [HttpPost("{id}")]
+        [Authorize(Roles = "MobileApp")]
+        public async Task<ApiResult<bool>> SetState(int id, [FromBody] OrderStates state)
+        {
+            var order = await dbContext
+                .Orders
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (order == null)
+                return new ApiResult<bool>(false, $"Заявка с id={id} не найдена!");
+
+            order.OrderState = await dbContext.OrderStates.FirstAsync(x => x.Name == state);
+
+            await dbContext.SaveChangesAsync();
+
+            int.TryParse(HttpContext.User.Identity.Name, out int userId);
+            dbContext.OrderStateHistories.Add(new OrderStateHistory
+            {
+                Date = DateTime.Now,
+                Order = order,
+                OrderState = order.OrderState,
+                UserId = userId
+            });
+            await dbContext.SaveChangesAsync();
+
+            return new ApiResult<bool>(true);
         }
     }
 }

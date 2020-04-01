@@ -39,21 +39,11 @@ namespace MobileApp
                         Timeout = TimeSpan.FromMilliseconds(Settings.TimeoutMs),
                     }));
 
+            containerRegistry.RegisterDialog<RefuelDialog, RefuelDialogViewModel>();
+
             ViewModelLocationProvider.Register<LoginPage, LoginPageViewModel>();
             ViewModelLocationProvider.Register<OrderListPage, OrderListPageViewModel>();
             ViewModelLocationProvider.Register<OrderPage, OrderPageViewModel>();
         }
-
-        /*protected override void OnStart()
-        {
-        }
-
-        protected override void OnSleep()
-        {
-        }
-
-        protected override void OnResume()
-        {
-        }*/
     }
 }

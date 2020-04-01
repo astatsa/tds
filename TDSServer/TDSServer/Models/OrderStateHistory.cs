@@ -10,6 +10,7 @@ namespace TDSServer.Models
         public Order Order { get; set; }
         public OrderState OrderState { get; set; }
         public DateTime Date { get; set; }
+        public int UserId { get; set; }
         public User User { get; set; }
     }
 }

@@ -19,5 +19,11 @@ namespace MobileApp.Api
 
         [Get("/orders/current")]
         Task<ApiResult<Order>> GetCurrentOrder();
+
+        [Post("/orders/{orderId}")]
+        Task<ApiResult<bool>> SetOrderState(int orderId, [Body]OrderStates state);
+
+        [Get("/gasstations")]
+        Task<ApiResult<ICollection<GasStation>>> GetGasStations();
     }
 }
