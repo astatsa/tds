@@ -16,6 +16,7 @@
     <PackageReference Include="Refit" Version="5.1.27" />
     <PackageReference Include="Xamarin.Forms" Version="4.5.0.495" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.2" />
+    <PackageReference Include="XF.Material" Version="1.5.8" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,95 +1,111 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             xmlns:prism="http://prismlibrary.com"
-             xmlns:conv="clr-namespace:MobileApp.Converters"
-             x:Class="MobileApp.View.OrderPage"
-             prism:ViewModelLocator.AutowireViewModel="True"
-             Title="Текущая заявка"
-             Style="{StaticResource CustPage}">
-    <ContentPage.Resources>
-        <x:Array x:Key="ButtonStateAliases" Type="{x:Type x:String}">
-            <x:String>Просмотрен</x:String>
-            <x:String>Загружен</x:String>
-            <x:String>Выгружен</x:String>
-            <x:String></x:String>
-        </x:Array>
-    </ContentPage.Resources>
-    <ContentPage.Content>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d"
+			 xmlns:prism="http://prismlibrary.com"
+			 xmlns:conv="clr-namespace:MobileApp.Converters"
+			 xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+			 xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
+			 x:Class="MobileApp.View.OrderPage"
+			 prism:ViewModelLocator.AutowireViewModel="True"
+			 Title="Текущая заявка"
+			 Shell.NavBarIsVisible="True">
+	<ContentPage.Resources>
+		<x:Array x:Key="ButtonStateAliases" Type="{x:Type x:String}">
+			<x:String>Просмотрен</x:String>
+			<x:String>Загружен</x:String>
+			<x:String>Выгружен</x:String>
+			<x:String></x:String>
+		</x:Array>
+	</ContentPage.Resources>
+	<ContentPage.ToolbarItems>
+	</ContentPage.ToolbarItems>
+	<ContentPage.Content>
         <RelativeLayout>
             <RefreshView RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
-                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
-                         IsRefreshing="{Binding IsRefreshing}"
-                         Command="{Binding RefreshCommand}">
+							 RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+							 IsRefreshing="{Binding IsRefreshing}"
+							 Command="{Binding RefreshCommand}">
                 <ScrollView>
-                    <Grid Margin="10,10,10,0" IsVisible="{Binding Order, Mode=OneWay, Converter={conv:NullToBoolConverter}}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Label Text="Дата:" Style="{StaticResource TextLabel}"/>
-                        <Label Text="{Binding Order.Date, StringFormat='{0:dd.MM.yyyy}'}"
-                               Grid.Column="1"
-                               Style="{StaticResource SecondaryDataText}"/>
-                        <Label Text="Откуда:" 
-                               Grid.Row="1"
-                               Style="{StaticResource TextLabel}"/>
-                        <Label Grid.Row="1" Grid.Column="1"
-                               Style="{StaticResource PrimaryDataText}"
-                               Text="{Binding Order.Supplier.Name}"/>
-                        <Label Grid.Row="2"
-                               Grid.Column="1"
-                               Text="{Binding Order.Supplier.Address}"
-                               Style="{StaticResource SecondaryDataText}"/>
-                        <Label Text="Куда:"
-                               Grid.Row="3"
-                               Style="{StaticResource TextLabel}"/>
-                        <Label Grid.Row="3" Grid.Column="1"
-                               Text="{Binding Order.Customer.Name}"
-                               Style="{StaticResource PrimaryDataText}"/>
-                        <Label Grid.Row="4"
-                               Grid.Column="1"
-                               Text="{Binding Order.Customer.Address}"
-                               Style="{StaticResource SecondaryDataText}"/>
-                        <Label Grid.Row="5" Grid.ColumnSpan="2"
-                               Style="{StaticResource PrimaryDataText}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="{Binding Order.Material}"/>
-                                    <Span Text="{Binding Order.Volume, StringFormat=' {0}'}"/>
-                                    <Span Text="{Binding Order.Material.Measure}"/>
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                        <Button FontSize="Medium"
-                                Grid.Row="6" 
-                                Grid.ColumnSpan="2"
-                                Command="{Binding ChangeStateCommand}"
-                                HeightRequest="60">
-                            <Button.Text>
-                                <Binding Path="Order.OrderState.Name">
-                                    <Binding.Converter>
-                                        <conv:OrderStateToTextConverter StateAliases="{StaticResource ButtonStateAliases}"/>
-                                    </Binding.Converter>
-                                </Binding>
-                            </Button.Text>
-                        </Button>
-                    </Grid>
+                    <material:MaterialCard CornerRadius="2" 
+                                           Elevation="2" 
+                                           Margin="10" 
+                                           HorizontalOptions="FillAndExpand" 
+                                           VerticalOptions="Start" 
+                                           IsVisible="{Binding Order, Mode=OneWay, Converter={conv:NullToBoolConverter}}">
+                        <StackLayout Orientation="Vertical">
+                            <Grid Margin="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Label Text="Дата:" Style="{StaticResource TextLabel}"/>
+                                <Label Text="{Binding Order.Date, StringFormat='{0:dd.MM.yyyy}'}"
+									Grid.Column="1"
+									Style="{StaticResource SecondaryDataText}"/>
+                                <Label Text="Откуда:" 
+									Grid.Row="1"
+									Style="{StaticResource TextLabel}"/>
+                                <Label Grid.Row="1" Grid.Column="1"
+									Style="{StaticResource PrimaryDataText}"
+									Text="{Binding Order.Supplier.Name}"/>
+                                <Label Grid.Row="2"
+									Grid.Column="1"
+									Text="{Binding Order.Supplier.Address}"
+									Style="{StaticResource SecondaryDataText}"/>
+                                <Label Text="Куда:"
+									Grid.Row="3"
+									Style="{StaticResource TextLabel}"/>
+                                <Label Grid.Row="3" Grid.Column="1"
+									Text="{Binding Order.Customer.Name}"
+									Style="{StaticResource PrimaryDataText}"/>
+                                <Label Grid.Row="4"
+									Grid.Column="1"
+									Text="{Binding Order.Customer.Address}"
+									Style="{StaticResource SecondaryDataText}"/>
+                                <Label Grid.Row="5" Grid.ColumnSpan="2"
+									Style="{StaticResource PrimaryDataText}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Order.Material}"/>
+                                            <Span Text="{Binding Order.Volume, StringFormat=' {0}'}"/>
+                                            <Span Text="{Binding Order.Material.Measure}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Grid>
+                            <material:MaterialButton FontSize="Medium"
+                                                     Grid.Row="6" 
+                                                     Grid.ColumnSpan="2"
+                                                     Command="{Binding ChangeStateCommand}"
+                                                     HeightRequest="60"
+                                                     HorizontalOptions="Center"
+                                                     ButtonType="Outlined">
+                                <Button.Text>
+                                    <Binding Path="Order.OrderState.Name">
+                                        <Binding.Converter>
+                                            <conv:OrderStateToTextConverter StateAliases="{StaticResource ButtonStateAliases}"/>
+                                        </Binding.Converter>
+                                    </Binding>
+                                </Button.Text>
+                            </material:MaterialButton>
+                        </StackLayout>
+                    </material:MaterialCard>
                 </ScrollView>
             </RefreshView>
-            <Button Style="{StaticResource FuelButton}" Command="{Binding RefuelAddCommand}"/>
-        </RelativeLayout>
-    </ContentPage.Content>
+            <material:MaterialButton Style="{StaticResource FuelButton}" 
+									 Command="{Binding RefuelAddCommand}"
+									 Elevation="3"/>
+		</RelativeLayout>
+	</ContentPage.Content>
 </ContentPage>

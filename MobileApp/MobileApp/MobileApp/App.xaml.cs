@@ -27,6 +27,7 @@ namespace MobileApp
         protected override void OnInitialized()
         {
             InitializeComponent();
+            XF.Material.Forms.Material.Init(this, "Material.Configuration");
             MainPage = new LoginPage();
         }
 

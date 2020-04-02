@@ -107,7 +107,7 @@ namespace MobileApp.ViewModel
 
                 if(isForeground && result.Result != null && result.Result.OrderState.Name == OrderStates.New)
                 {
-                    if(await SetState(OrderStates.Viewed))
+                    if(await SetState(OrderStates.Viewed, result.Result))
                     {
                         result.Result.OrderState.Name = OrderStates.Viewed;
                     }
@@ -125,12 +125,16 @@ namespace MobileApp.ViewModel
             }
         }
 
-        private async Task<bool> SetState(OrderStates state)
+        private async Task<bool> SetState(OrderStates state, Order order = null)
         {
+            if(order == null)
+            {
+                order = Order;
+            }
             try
             {
                 CanSave = false;
-                var result = await api.SetOrderState(Order.Id, state);
+                var result = await api.SetOrderState(order.Id, state);
                 if (result.Error != null)
                 {
                     Message = result.Error;

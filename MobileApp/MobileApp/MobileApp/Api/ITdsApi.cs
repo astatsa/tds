@@ -25,5 +25,8 @@ namespace MobileApp.Api
 
         [Get("/gasstations")]
         Task<ApiResult<ICollection<GasStation>>> GetGasStations();
+
+        [Post("/refuels")]
+        Task<ApiResult<bool>> AddRefuel([Body] Refuel refuel);
     }
 }

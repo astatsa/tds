@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using XF.Material.Forms.UI;
 
 namespace MobileApp.ViewModel
 {
@@ -94,7 +95,7 @@ namespace MobileApp.ViewModel
                 {
                     IsLoading = false;
                 }
-                App.Current.MainPage = new NavigationPage(new OrderPage());
+                App.Current.MainPage = new MaterialNavigationPage(new OrderPage());
             },
             () => !IsLoading && !String.IsNullOrEmpty(Username))
             .ObservesProperty(() => IsLoading)

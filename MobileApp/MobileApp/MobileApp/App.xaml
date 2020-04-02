@@ -5,8 +5,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:prism="http://prismlibrary.com"
+             xmlns:material="clr-namespace:XF.Material.Forms.Resources;assembly=XF.Material"
+             xmlns:mui="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
+             xmlns:mtrltypo="clr-namespace:XF.Material.Forms.Resources.Typography;assembly=XF.Material"
              x:Class="MobileApp.App">
     <Application.Resources>
+        <!--#region XF.MATERIAL-->
+        <OnPlatform x:Key="FontFamily.RobotoRegular"
+            x:TypeArguments="x:String"
+            Android="Fonts/Roboto-Regular.ttf#Roboto-Regular"
+            iOS="Roboto-Regular" />
+        <OnPlatform x:Key="FontFamily.RobotoMedium"
+            x:TypeArguments="x:String"
+            Android="Fonts/Roboto-Medium.ttf#Roboto-Medium"
+            iOS="Roboto-Medium" />
+
+        <mtrltypo:MaterialFontConfiguration x:Key="Material.Font"
+            Body1="{StaticResource FontFamily.RobotoRegular}"
+            Body2="{StaticResource FontFamily.RobotoRegular}"
+            Button="{StaticResource FontFamily.RobotoMedium}"
+            Caption="{StaticResource FontFamily.RobotoRegular}"
+            H1="{StaticResource FontFamily.RobotoRegular}"
+            H2="{StaticResource FontFamily.RobotoRegular}"
+            H3="{StaticResource FontFamily.RobotoRegular}"
+            H4="{StaticResource FontFamily.RobotoRegular}"
+            H5="{StaticResource FontFamily.RobotoRegular}"
+            H6="{StaticResource FontFamily.RobotoMedium}"
+            Overline="{StaticResource FontFamily.RobotoRegular}"
+            Subtitle1="{StaticResource FontFamily.RobotoRegular}"
+            Subtitle2="{StaticResource FontFamily.RobotoMedium}" />
+
+        <material:MaterialColorConfiguration x:Key="Material.Color"
+            Background="#EAEAEA"
+            Error="#B00020"
+            OnBackground="#000000"
+            OnError="#FFFFFF"
+            OnPrimary="#FFFFFF"
+            OnSecondary="#FFFFFF"
+            OnSurface="#000000"
+            Primary="#FFFFFF"
+            PrimaryVariant="#FFFFFF"
+            Secondary="#311b92"
+            SecondaryVariant="#6746c3"
+            Surface="#FFFFFF" />
+
+        <material:MaterialConfiguration x:Key="Material.Configuration"
+                                        ColorConfiguration="{StaticResource Material.Color}"
+                                        FontConfiguration="{StaticResource Material.Font}"/>
+        <!--#endregion-->
+
         <Color x:Key="DarkPrimaryColor">#1976D2</Color>
         <Color x:Key="PrimaryColor">#2196F3</Color>
         <Color x:Key="AccentColor">#00BCD4</Color>
@@ -17,10 +64,10 @@
             <On Platform="iOS" Value="fontello"/>
             <On Platform="Android" Value="fontello.ttf#fontello"/>
         </OnPlatform>
-        <Style TargetType="NavigationPage">
-            <Setter Property="NavigationPage.BarBackgroundColor" Value="{StaticResource PrimaryColor}"/>
-        </Style>
-        <Style x:Key="CustPage" TargetType="ContentPage">
+        <!--<Style TargetType="NavigationPage" ApplyToDerivedTypes="True">
+            <Setter Property="NavigationPage.BarBackgroundColor" Value="{Binding Primary, Source={StaticResource Material.Color}}"/>
+        </Style>-->
+        <!--<Style x:Key="CustPage" TargetType="ContentPage">
             <Setter Property="NavigationPage.TitleView">
                 <Setter.Value>
                     <Label Text="{Binding Path=Title, Source={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContentPage}}}" 
@@ -29,11 +76,16 @@
                     </Label>
                 </Setter.Value>
             </Setter>
+        </Style>-->
+        <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+            <Setter Property="mui:MaterialNavigationPage.AppBarTitleTextColor" Value="Black"/>
+            <Setter Property="mui:MaterialNavigationPage.AppBarColor" Value="{Binding Primary, Source={StaticResource Material.Color}}"/>
+            <Setter Property="mui:MaterialNavigationPage.AppBarTitleTextFontFamily" Value="{Binding H5, Source={StaticResource Material.Font}}"/>
         </Style>
         <Style x:Key="FuelButton" TargetType="Button">
-            <Setter Property="CornerRadius" Value="30"/>
-            <Setter Property="WidthRequest" Value="60"/>
-            <Setter Property="HeightRequest" Value="60"/>
+            <Setter Property="CornerRadius" Value="35"/>
+            <Setter Property="WidthRequest" Value="70"/>
+            <Setter Property="HeightRequest" Value="70"/>
             <Setter Property="FontFamily" Value="{StaticResource FuelFont}"/>
             <Setter Property="Text">
                 <Setter.Value>
@@ -44,7 +96,6 @@
             </Setter>
             <Setter Property="TextColor" Value="White"/>
             <Setter Property="FontSize" Value="Large"/>
-            <Setter Property="BackgroundColor" Value="{StaticResource AccentColor}"/>
             <Setter Property="RelativeLayout.XConstraint" Value="{ConstraintExpression Type=RelativeToParent, Property=Width, Constant=-70}"/>
             <Setter Property="RelativeLayout.YConstraint" Value="{ConstraintExpression Type=RelativeToParent, Property=Height, Constant=-80}"/>
         </Style>
