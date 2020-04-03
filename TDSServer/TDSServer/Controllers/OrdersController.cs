@@ -50,7 +50,7 @@ namespace TDSServer.Controllers
                     .Include(x => x.Material)
                     .ThenInclude(x => x.Measure)
                     .Where(x => x.OrderState.Name != OrderStates.Completed && x.Driver != null && x.Driver.UserId == userId)
-                    .OrderByDescending(x => x.Number)
+                    .OrderBy(x => x.Number)
                     .FirstOrDefaultAsync();
                 return new ApiResult<Order>(order);
             }

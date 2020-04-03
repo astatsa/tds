@@ -81,6 +81,7 @@
             <Setter Property="mui:MaterialNavigationPage.AppBarTitleTextColor" Value="Black"/>
             <Setter Property="mui:MaterialNavigationPage.AppBarColor" Value="{Binding Primary, Source={StaticResource Material.Color}}"/>
             <Setter Property="mui:MaterialNavigationPage.AppBarTitleTextFontFamily" Value="{Binding H5, Source={StaticResource Material.Font}}"/>
+            <Setter Property="mui:MaterialNavigationPage.AppBarTitleTextFontSize" Value="20"/>
         </Style>
         <Style x:Key="FuelButton" TargetType="Button">
             <Setter Property="CornerRadius" Value="35"/>
@@ -111,6 +112,13 @@
         <Style x:Key="SecondaryDataText" TargetType="Label">
             <Setter Property="FontSize" Value="Medium"/>
             <Setter Property="TextColor" Value="{StaticResource PrimaryTextColor}"/>
+        </Style>
+        <Style TargetType="Button" x:Key="OutlineButton">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="TextColor" Value="{Binding Secondary, Source={StaticResource Material.Color}}"/>
+            <Setter Property="FontFamily" Value="{Binding Button, Source={StaticResource Material.Font}}"/>
+            <Setter Property="BorderColor" Value="LightGray"/>
+            <Setter Property="BorderWidth" Value="1"/>
         </Style>
     </Application.Resources>
 </prism:PrismApplication>

@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 using Prism.AppModel;
 using Prism.Services.Dialogs;
 using MobileApp.View;
+using System.ComponentModel;
+using XF.Material.Forms.UI.Dialogs;
+using Unity;
+using XF.Material.Forms.UI;
 
 namespace MobileApp.ViewModel
 {
@@ -46,32 +50,56 @@ namespace MobileApp.ViewModel
             () => !IsRefreshing)
             .ObservesProperty(() => IsRefreshing);
 
-        private ICommand changeStateCommand;
-        public ICommand ChangeStateCommand 
-        {
-            get => changeStateCommand ?? 
-                (changeStateCommand = new DelegateCommand(async () =>
+        public ICommand ChangeStateCommand => new DelegateCommand(async () =>
+            {
+                if (Order.OrderState.Name < OrderStates.Completed)
                 {
-                    if (Order.OrderState.Name < OrderStates.Completed)
+                    if (await SetState(Order.OrderState.Name + 1))
                     {
-                        if (await SetState(Order.OrderState.Name + 1))
-                        {
-                            RefreshOrder();
-                        }
+                        RefreshOrder();
                     }
-                })
-                .ObservesCanExecute(() => CanSave));
-        }
+                }
+            },
+            () => CanSave)
+            .ObservesProperty(() => CanSave);
+            //.ObservesCanExecute(() => CanSave);
 
-        private ICommand refuelAddCommand;
-        public ICommand RefuelAddCommand 
-        {
-            get => refuelAddCommand ??
-                (refuelAddCommand = new DelegateCommand(() =>
+        public ICommand RefuelAddCommand => new DelegateCommand(async () =>
+            {
+                var view = new RefuelDialog();
+                var result = await MaterialDialog.Instance.ShowCustomContentAsync(view, "Информация о заправке", confirmingText: "OK", dismissiveText: "Отмена");
+                if(result.HasValue && result.Value && view.BindingContext is RefuelDialogViewModel vm)
                 {
-                    dialogService.ShowDialog(nameof(RefuelDialog));
-                }));
-        }
+                    if(vm.SelectedGasStation == null)
+                    {
+                        _ = MaterialDialog.Instance.SnackbarAsync("Не указана АЗС!", MaterialSnackbar.DurationShort);
+                        return;
+                    }
+                    if(vm.Volume <= 0)
+                    {
+                        _ = MaterialDialog.Instance.SnackbarAsync("Не указан объем!", MaterialSnackbar.DurationShort);
+                        return;
+                    }
+                    try
+                    {
+                        var apiResult = await api.AddRefuel(new Refuel
+                        {
+                            GasStation = vm.SelectedGasStation,
+                            Volume = vm.Volume
+                        });
+                        if(apiResult.Error != null)
+                        {
+                            Message = apiResult.Error;
+                            return;
+                        }
+                        _ = MaterialDialog.Instance.SnackbarAsync("Заправка успешно добавлена!", MaterialSnackbar.DurationShort);
+                    }
+                    catch (Exception ex)
+                    {
+                        Message = ex.Message;
+                    }
+                }
+            });
 
         private bool canSave;
         public bool CanSave
@@ -87,6 +115,16 @@ namespace MobileApp.ViewModel
             this.dialogService = dialogService;
 
             RefreshCommand.Execute(null);
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(Message) && !String.IsNullOrWhiteSpace(Message))
+            {
+                MaterialDialog.Instance.SnackbarAsync(Message, "Закрыть", MaterialSnackbar.DurationIndefinite);
+                Message = null;
+            }
+            base.OnPropertyChanged(args);
         }
 
         private ITdsApi api;
@@ -134,6 +172,16 @@ namespace MobileApp.ViewModel
             try
             {
                 CanSave = false;
+                if(state == OrderStates.Loaded || state == OrderStates.Completed)
+                {
+                    var weight = await MaterialDialog.Instance.InputAsync(message: "Введите вес", inputText: order.Volume.ToString(), 
+                        inputPlaceholder: "Вес", dismissiveText: "Отмена",
+                        configuration: new XF.Material.Forms.UI.Dialogs.Configurations.MaterialInputDialogConfiguration
+                        {
+                            InputType = MaterialTextFieldInputType.Numeric
+                        });
+                }
+
                 var result = await api.SetOrderState(order.Id, state);
                 if (result.Error != null)
                 {

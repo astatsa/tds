@@ -45,6 +45,7 @@ namespace MobileApp
             ViewModelLocationProvider.Register<LoginPage, LoginPageViewModel>();
             ViewModelLocationProvider.Register<OrderListPage, OrderListPageViewModel>();
             ViewModelLocationProvider.Register<OrderPage, OrderPageViewModel>();
+            ViewModelLocationProvider.Register<RefuelDialog, RefuelDialogViewModel>();
         }
     }
 }

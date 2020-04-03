@@ -1,34 +1,25 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Frame xmlns="http://xamarin.com/schemas/2014/forms" 
-		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-		xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		mc:Ignorable="d"
-		x:Class="MobileApp.View.RefuelDialog"
-		xmlns:prism="http://prismlibrary.com"
-        xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
-		BackgroundColor="{Binding Surface, Source={StaticResource Material.Color}}"
-		prism:DialogLayout.RelativeWidthRequest="0.75"
-		prism:DialogLayout.CloseOnBackgroundTapped="True"
-	    Padding="10"
-        CornerRadius="2">
-    <StackLayout Orientation="Vertical" Spacing="15">
+﻿<?xml version="1.0" encoding="UTF-8"?>    
+<StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
+                xmlns:prism="http://prismlibrary.com"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
+                xmlns:conv="clr-namespace:MobileApp.Converters"
+                prism:ViewModelLocator.AutowireViewModel="True"
+                x:Class="MobileApp.View.RefuelDialog"
+                Orientation="Vertical" Spacing="15" >
         <material:MaterialTextField InputType="Choice"
-                                    Placeholder="АЗС"
-                                    FloatingPlaceholderEnabled="True"
-                                    Choices="{Binding GasStations}"
-                                    ChoicesBindingName="Name"
-                                    BackgroundColor="Transparent"
-                                    AlwaysShowUnderline="True"/>
+                                Placeholder="АЗС"
+                                FloatingPlaceholderEnabled="True"
+                                Choices="{Binding GasStations}"
+                                ChoicesBindingName="Name"
+                                BackgroundColor="Transparent"
+                                AlwaysShowUnderline="True"
+                                SelectedChoice="{Binding SelectedGasStation}"
+                                IsEnabled="{Binding IsLoaded}"/>
         <material:MaterialTextField InputType="Numeric"
-                                    Placeholder="Объем"
-                                    FloatingPlaceholderEnabled="True"
-                                    Text="{Binding Volume}"
-                                    BackgroundColor="Transparent"
-                                    AlwaysShowUnderline="True"/>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand">
-            <material:MaterialButton Text="OK" Command="{Binding OKCommand}" ButtonType="Text"/>
-            <material:MaterialButton Text="Отмена" Command="{Binding CancelCommand}" ButtonType="Text"/>
-        </StackLayout>
-    </StackLayout>
-</Frame>
+                                        Placeholder="Объем"
+                                        FloatingPlaceholderEnabled="True"
+                                        Text="{Binding Volume, Converter={conv:DoubleToStringConverter}}"
+                                        BackgroundColor="Transparent"
+                                        AlwaysShowUnderline="True"/>
+</StackLayout>

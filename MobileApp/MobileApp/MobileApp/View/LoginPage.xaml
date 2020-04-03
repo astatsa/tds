@@ -7,7 +7,8 @@
              x:Class="MobileApp.View.LoginPage"
              x:Name="ThisPage"
              xmlns:prism="http://prismlibrary.com"
-             prism:ViewModelLocator.AutowireViewModel="True">
+             prism:ViewModelLocator.AutowireViewModel="True"
+             xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material">
 
     <ContentPage.Resources>
     </ContentPage.Resources>
@@ -22,10 +23,24 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Image/>
-        <Entry Grid.Row="1" Placeholder="Введите логин" Text="{Binding Username}"/>
-        <Entry Grid.Row="2" Placeholder="Введите пароль" IsPassword="True" Text="{Binding Password}"/>
+        <material:MaterialTextField Grid.Row="1" 
+                                    Placeholder="Логин" 
+                                    Text="{Binding Username}"
+                                    AlwaysShowUnderline="True"
+                                    BackgroundColor="Transparent"
+                                    FloatingPlaceholderEnabled="True"/>
+        <material:MaterialTextField Grid.Row="2" 
+                                    Placeholder="Пароль" 
+                                    ReturnType="Done"
+                                    ReturnCommand="{Binding LoginCommand}"
+                                    IsAutoCapitalizationEnabled="False"
+                                    InputType="Password" 
+                                    Text="{Binding Password}"
+                                    AlwaysShowUnderline="True"
+                                    BackgroundColor="Transparent"
+                                    FloatingPlaceholderEnabled="true"/>
         <Label Grid.Row="3" Text="{Binding Message}" TextColor="Red" HorizontalTextAlignment="Center"/>
-        <Button Grid.Row="4" Text="Войти" HorizontalOptions="Fill" Command="{Binding LoginCommand}"/>
+        <material:MaterialButton Grid.Row="4" Text="Войти" HorizontalOptions="FillAndExpand" ButtonType="Outlined" Command="{Binding LoginCommand}"/>
         <ActivityIndicator Grid.Row="5" Color="Blue" IsRunning="{Binding IsLoading}"/>
     </Grid>
 </ContentPage>

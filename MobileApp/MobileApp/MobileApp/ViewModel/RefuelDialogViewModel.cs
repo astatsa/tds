@@ -5,13 +5,15 @@ using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using XF.Material.Forms.UI.Dialogs;
 
 namespace MobileApp.ViewModel
 {
-    class RefuelDialogViewModel : BindableBase, IDialogAware
+    class RefuelDialogViewModel : BindableBase//, IDialogAware
     {
         private ICollection<GasStation> gasStations;
         public ICollection<GasStation> GasStations 
@@ -48,8 +50,20 @@ namespace MobileApp.ViewModel
             set => SetProperty(ref canSave, value);
         }
 
+        private bool isLoaded;
+        public bool IsLoaded
+        {
+            get => isLoaded;
+            set => SetProperty(ref isLoaded, value);
+        }
+
+
         #region Commands
-        public ICommand CancelCommand => new DelegateCommand(() => RequestClose?.Invoke(null));
+        public ICommand SelectCommand => new DelegateCommand(() =>
+        {
+            MaterialDialog.Instance.SelectChoiceAsync("", GasStations.Select(x => x.Name).ToList(), dismissiveText: "Отмена");
+        });
+        /*public ICommand CancelCommand => new DelegateCommand(() => RequestClose?.Invoke(null));
 
         public ICommand OKCommand => new DelegateCommand(
             () =>
@@ -63,7 +77,6 @@ namespace MobileApp.ViewModel
                         Volume = Volume
                     });
                     MaterialDialog.Instance.SnackbarAsync("Заправка успешно добавлена!", MaterialSnackbar.DurationShort);
-                    RequestClose?.Invoke(null);
                 }
                 catch(Exception ex)
                 {
@@ -77,7 +90,7 @@ namespace MobileApp.ViewModel
             () => SelectedGasStation != null && Volume > 0 && CanSave)
             .ObservesProperty(() => Volume)
             .ObservesProperty(() => SelectedGasStation)
-            .ObservesProperty(() => CanSave);
+            .ObservesProperty(() => CanSave);*/
         #endregion
 
         private ITdsApi api;
@@ -85,36 +98,40 @@ namespace MobileApp.ViewModel
         {
             this.api = api;
             CanSave = true;
+
+            LoadGasStations();
         }
 
-        public event Action<IDialogParameters> RequestClose;
-
-        public bool CanCloseDialog()
+        private async void LoadGasStations()
         {
-            return true;
-        }
-
-        public void OnDialogClosed()
-        {
-            
-        }
-
-        public async void OnDialogOpened(IDialogParameters parameters)
-        {
+            IsLoaded = false;
             try
             {
                 var result = await api.GetGasStations();
-                if(result.Error != null)
+                if (result.Error != null)
                 {
                     Message = result.Error;
                     return;
                 }
                 GasStations = result.Result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Message = ex.Message;
             }
+            finally
+            {
+                IsLoaded = true;
+            }
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs args)
+        {
+            if(args.PropertyName == nameof(Message) && !String.IsNullOrWhiteSpace(Message))
+            {
+                MaterialDialog.Instance.SnackbarAsync(Message, "Закрыть", MaterialSnackbar.DurationIndefinite);
+            }
+            base.OnPropertyChanged(args);
         }
     }
 }
