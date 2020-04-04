@@ -66,7 +66,7 @@ namespace TDSServer.Services
         public static string GetPasswordHash(string password)
         {
             using var sha = SHA256.Create();
-            return Encoding.UTF8.GetString(sha.ComputeHash(Encoding.UTF8.GetBytes(password)));
+            return String.Join("", sha.ComputeHash(Encoding.UTF8.GetBytes(password)).Select(x => x.ToString("x2")));
         }
     }
 }

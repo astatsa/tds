@@ -7,16 +7,24 @@
                 prism:ViewModelLocator.AutowireViewModel="True"
                 x:Class="MobileApp.View.RefuelDialog"
                 Orientation="Vertical" Spacing="15" >
-        <material:MaterialTextField InputType="Choice"
+    <material:MaterialTextField InputType="Choice"
                                 Placeholder="АЗС"
                                 FloatingPlaceholderEnabled="True"
                                 Choices="{Binding GasStations}"
                                 ChoicesBindingName="Name"
                                 BackgroundColor="Transparent"
                                 AlwaysShowUnderline="True"
-                                SelectedChoice="{Binding SelectedGasStation}"
-                                IsEnabled="{Binding IsLoaded}"/>
-        <material:MaterialTextField InputType="Numeric"
+                                SelectedChoice="{Binding SelectedGasStation}">
+        <material:MaterialTextField.Triggers>
+            <DataTrigger TargetType="material:MaterialTextField" Binding="{Binding GasStations}" Value="{x:Null}">
+                <Setter Property="IsEnabled" Value="False"/>
+            </DataTrigger>
+            <DataTrigger TargetType="material:MaterialTextField" Binding="{Binding GasStations.Count}" Value="0">
+                <Setter Property="IsEnabled" Value="False"/>
+            </DataTrigger>
+        </material:MaterialTextField.Triggers>
+    </material:MaterialTextField>
+    <material:MaterialTextField InputType="Numeric"
                                         Placeholder="Объем"
                                         FloatingPlaceholderEnabled="True"
                                         Text="{Binding Volume, Converter={conv:DoubleToStringConverter}}"

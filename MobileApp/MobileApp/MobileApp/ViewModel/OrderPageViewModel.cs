@@ -174,7 +174,7 @@ namespace MobileApp.ViewModel
                 CanSave = false;
                 if(state == OrderStates.Loaded || state == OrderStates.Completed)
                 {
-                    var weight = await MaterialDialog.Instance.InputAsync(message: "Введите вес", inputText: order.Volume.ToString(), 
+                    var weight = await MaterialDialog.Instance.InputAsync(message: "Введите вес", 
                         inputPlaceholder: "Вес", dismissiveText: "Отмена",
                         configuration: new XF.Material.Forms.UI.Dialogs.Configurations.MaterialInputDialogConfiguration
                         {

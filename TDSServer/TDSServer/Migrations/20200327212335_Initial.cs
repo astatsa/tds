@@ -435,7 +435,7 @@ namespace TDSServer.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "FullName", "PasswordHash", "Username" },
-                values: new object[] { 1, "Администратор", "�iv�A���M�߱g��s�K��o*�H�", "admin" });
+                values: new object[] { 1, "Администратор", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", "admin" });
 
             migrationBuilder.InsertData(
                 table: "RolePermissions",
