@@ -40,7 +40,8 @@ namespace TDSServer
             var permissions = new List<Permission>
             {
                 new Permission { Id = 1, Name = "MobileApp", FullName = "Мобильное приложение" },
-                new Permission { Id = 2, Name = "OrderRead", FullName = "Чтение заявок" }
+                new Permission { Id = 2, Name = "OrderRead", FullName = "Чтение заявок" },
+                new Permission { Id = 3, Name = "EmployeeRead", FullName = "Чтение справочника сотрудников" }
             };
             var roles = new List<Role>
             {

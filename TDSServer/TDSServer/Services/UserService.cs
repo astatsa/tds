@@ -25,9 +25,8 @@ namespace TDSServer.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<(User User, string Token)> AuthenticateAsync(string username, string password)
+        public async Task<(User User, string Token)> AuthenticateAsync(string username, string passwordHash)
         {
-            string passwordHash = GetPasswordHash(password);
             var user = await dbContext.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(x => x.Role)

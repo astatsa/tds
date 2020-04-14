@@ -4,8 +4,10 @@ using Prism.Commands;
 using Refit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,7 +76,7 @@ namespace MobileApp.ViewModel
 
                 try
                 {
-                    var authResult = await api.Auth(new { Username, Password });
+                    var authResult = await api.Auth(new { Username, Password = GetPasswordHash() });
                     if (String.IsNullOrWhiteSpace(authResult.Token))
                     {
                         Message = "Ошибка авторизации!";
@@ -83,7 +85,7 @@ namespace MobileApp.ViewModel
                     SessionContext.Employee = authResult.Employee;
                     SessionContext.Token = authResult.Token;
                 }
-                catch (Refit.ApiException apiEx) when (apiEx.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                catch (Refit.ApiException apiEx) when (apiEx.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
                     Message = apiEx.Content ?? apiEx.Message;
                     return;
@@ -106,6 +108,14 @@ namespace MobileApp.ViewModel
         public LoginPageViewModel(ITdsApi tdsApi)
         {
             this.api = tdsApi;
+        }
+
+        private string GetPasswordHash()
+        {
+            using (var sha = SHA256.Create())
+            {
+                return String.Join("", sha.ComputeHash(Encoding.UTF8.GetBytes(password)).Select(x => x.ToString("x2")));
+            }
         }
 
         private readonly ITdsApi api;

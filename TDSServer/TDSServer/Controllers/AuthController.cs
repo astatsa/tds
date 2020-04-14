@@ -28,12 +28,19 @@ namespace TDSServer.Controllers
             (var user, var token) = await userService.AuthenticateAsync(authModel.Username, authModel.Password);
             
             if (token == null)
-                return BadRequest("Неверное имя пользователя или пароль!");
+                return Unauthorized("Неверное имя пользователя или пароль!");
 
             return Ok(new 
             { 
                 Token = token,
-                Employee = user.Employee
+                Employee = new TDSDTO.References.Employee
+                    {
+                        Name = user.Employee.Name,
+                        FullName = user.Employee.FullName,
+                        UserId = user.Id,
+                        PositionId = user.Employee.PositionId,
+                        UserName = user.Username
+                    }
             });
         }
     }
