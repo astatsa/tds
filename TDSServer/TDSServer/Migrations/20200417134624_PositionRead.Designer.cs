@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TDSServer;
 
 namespace TDSServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200417134624_PositionRead")]
+    partial class PositionRead
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -390,13 +392,6 @@ namespace TDSServer.Migrations
                             FullName = "Чтение справочника должностей",
                             IsDeleted = false,
                             Name = "PositionRead"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            FullName = "Чтение справочника контрагентов",
-                            IsDeleted = false,
-                            Name = "CounterpartyRead"
                         });
                 });
 
@@ -537,11 +532,6 @@ namespace TDSServer.Migrations
                         new
                         {
                             PermissionId = 4,
-                            RoleId = 1
-                        },
-                        new
-                        {
-                            PermissionId = 5,
                             RoleId = 1
                         });
                 });
