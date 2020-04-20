@@ -43,7 +43,8 @@ namespace TDSServer
                 new Permission { Id = 2, Name = "OrderRead", FullName = "Чтение заявок" },
                 new Permission { Id = 3, Name = "EmployeeRead", FullName = "Чтение справочника сотрудников" },
                 new Permission { Id = 4, Name = "PositionRead", FullName = "Чтение справочника должностей" },
-                new Permission { Id = 5, Name = "CounterpartyRead", FullName = "Чтение справочника контрагентов" }
+                new Permission { Id = 5, Name = "CounterpartyRead", FullName = "Чтение справочника контрагентов" },
+                new Permission { Id = 6, Name = "UserRead", FullName = "Чтение справочника пользователей" }
             };
             var roles = new List<Role>
             {
