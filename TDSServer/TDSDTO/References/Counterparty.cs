@@ -13,9 +13,8 @@ namespace TDSDTO.References
         public string Address { get; set; }
         [DisplayName("Описание")]
         public string Description { get; set; }
-        public int TypeId { get; set; }
         [DisplayName("Тип")]
         public string TypeName { get; set; }
-
+        public bool IsSupplier { get; set; }
     }
 }

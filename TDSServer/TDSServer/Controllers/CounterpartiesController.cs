@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TDSServer.Models;
 using DTO = TDSDTO.References;
 
 
@@ -25,6 +26,7 @@ namespace TDSServer.Controllers
         }
 
         [Authorize(Roles = "CounterpartyRead")]
+        [HttpGet]
         public Task<List<DTO.Counterparty>> GetCounterparties() =>
             dbContext.Counterparties
             .Include(x => x.Type)
@@ -36,8 +38,22 @@ namespace TDSServer.Controllers
                 TypeName = x.Type.Name == Models.CounterpartyTypes.Customer ? "Покупатель" : "Поставщик",
                 Id = x.Id,
                 IsDeleted = x.IsDeleted,
-                TypeId = x.TypeId
+                IsSupplier = x.Type.Name == Models.CounterpartyTypes.Supplier
             })
             .ToListAsync();
+
+        [HttpPost]
+        public async Task<ApiResult<bool>> SaveCounterparty([FromBody] DTO.Counterparty counterparty)
+        {
+            var cp = await dbContext.Counterparties
+                .Where(x => x.Id == counterparty.Id)
+                .FirstOrDefaultAsync();
+
+            cp.Name = counterparty.Name;
+            cp.Address = counterparty.Address;
+
+            await dbContext.SaveChangesAsync();
+            return new ApiResult<bool>(true);
+        }
     }
 }
