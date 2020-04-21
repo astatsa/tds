@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TDSServer;
 
 namespace TDSServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200421220703_UserCounterpartyEdit")]
+    partial class UserCounterpartyEdit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -418,13 +420,6 @@ namespace TDSServer.Migrations
                             FullName = "Изменение справочника пользователей",
                             IsDeleted = false,
                             Name = "UserEdit"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            FullName = "Изменение справочника сотрудников",
-                            IsDeleted = false,
-                            Name = "EmployeeEdit"
                         });
                 });
 
@@ -585,11 +580,6 @@ namespace TDSServer.Migrations
                         new
                         {
                             PermissionId = 8,
-                            RoleId = 1
-                        },
-                        new
-                        {
-                            PermissionId = 9,
                             RoleId = 1
                         });
                 });

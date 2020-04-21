@@ -43,16 +43,32 @@ namespace TDSServer.Controllers
             .ToListAsync();
 
         [HttpPost]
+        [Authorize(Roles = "CounterpartyEdit")]
         public async Task<ApiResult<bool>> SaveCounterparty([FromBody] DTO.Counterparty counterparty)
         {
-            var cp = await dbContext.Counterparties
-                .Where(x => x.Id == counterparty.Id)
-                .FirstOrDefaultAsync();
+            try
+            {
+                var cp = await dbContext.Counterparties.
+                    FirstOrDefaultAsync(x => x.Id == counterparty.Id);
 
-            cp.Name = counterparty.Name;
-            cp.Address = counterparty.Address;
+                if(cp == null)
+                {
+                    return new ApiResult<bool>(false, "Элемент справочника не найден!");
+                }
 
-            await dbContext.SaveChangesAsync();
+                var cpType = counterparty.IsSupplier ? CounterpartyTypes.Supplier : CounterpartyTypes.Customer;
+                cp.Name = counterparty.Name;
+                cp.Address = counterparty.Address;
+                cp.Description = counterparty.Description;
+                cp.Type = dbContext.CounterpartyTypes.
+                    FirstOrDefault(x => x.Name == cpType);
+
+                await dbContext.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                return new ApiResult<bool>(false, ex.Message);
+            }
             return new ApiResult<bool>(true);
         }
     }

@@ -41,10 +41,45 @@ namespace TDSServer.Controllers
                     UserId = x.UserId,
                     PositionId = x.PositionId,
                     PositionName = x.Position.Name,
-                    UserName = x.User.Username,
-                    Id = x.Id,
+                    UserName = x.User.FullName,
+                    Id = x.Id,  
                     IsDeleted = x.IsDeleted
                 })
                 .ToListAsync();
+
+        [HttpPost]
+        [Authorize(Roles = "EmployeeEdit")]
+        public async Task<ApiResult<bool>> SaveEmployee([FromBody] DTO.Employee employee)
+        {
+            try
+            {
+                Employee em;
+                if (employee.Id != default)
+                {
+                    em = await dbContext.Employees.FirstOrDefaultAsync(x => x.Id == employee.Id);
+                    if (em == null)
+                    {
+                        return new ApiResult<bool>(false, "Не найден элемент справочника!");
+                    }
+                }
+                else
+                {
+                    em = new Employee();
+                    dbContext.Employees.Add(em);
+                }
+
+                em.FullName = employee.FullName;
+                em.Name = employee.Name;
+                em.PositionId = employee.PositionId;
+                em.UserId = employee.UserId;
+
+                await dbContext.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                return new ApiResult<bool>(false, ex.Message);
+            }
+            return new ApiResult<bool>(true);
+        }
     }
 }
