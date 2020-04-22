@@ -17,7 +17,7 @@ namespace TDSServer.Controllers
     [Authorize]
     public class EmployeesController : ControllerBase
     {
-        private AppDbContext dbContext;
+        private readonly AppDbContext dbContext;
         public EmployeesController(AppDbContext dbContext)
         {
             this.dbContext = dbContext;
@@ -29,7 +29,7 @@ namespace TDSServer.Controllers
                 .FirstOrDefaultAsync(x => x.UserId == userId);
 
         [HttpGet]
-        [Authorize(Roles = "EmployeeRead")]
+        [Authorize(Roles = "ReferenceRead")]
         public Task<List<DTO.Employee>> GetEmployees() =>
             dbContext.Employees
                 .Include(x => x.User)
@@ -48,7 +48,7 @@ namespace TDSServer.Controllers
                 .ToListAsync();
 
         [HttpPost]
-        [Authorize(Roles = "EmployeeEdit")]
+        [Authorize(Roles = "ReferenceEdit")]
         public async Task<ApiResult<bool>> SaveEmployee([FromBody] DTO.Employee employee)
         {
             try
@@ -74,6 +74,10 @@ namespace TDSServer.Controllers
                 em.UserId = employee.UserId;
 
                 await dbContext.SaveChangesAsync();
+            }
+            catch(DbUpdateException ex)
+            {
+                return new ApiResult<bool>(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
             catch(Exception ex)
             {

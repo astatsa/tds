@@ -24,7 +24,7 @@ namespace TDSServer.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "PositionRead")]
+        [Authorize(Roles = "ReferenceRead")]
         public Task<List<DTO.Position>> GetPositions() =>
             dbContext.Positions
             .Select(x => new DTO.Position

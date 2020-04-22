@@ -23,7 +23,7 @@ namespace TDSServer.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "UserRead")]
+        [Authorize(Roles = "ReferenceRead")]
         public Task<List<DTO.User>> GetUsers() =>
             dbContext.Users
             .Select(x => new DTO.User

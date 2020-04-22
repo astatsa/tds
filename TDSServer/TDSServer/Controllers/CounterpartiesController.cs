@@ -25,7 +25,7 @@ namespace TDSServer.Controllers
             this.dbContext = dbContext;
         }
 
-        [Authorize(Roles = "CounterpartyRead")]
+        [Authorize(Roles = "ReferenceRead")]
         [HttpGet]
         public Task<List<DTO.Counterparty>> GetCounterparties() =>
             dbContext.Counterparties
@@ -43,17 +43,25 @@ namespace TDSServer.Controllers
             .ToListAsync();
 
         [HttpPost]
-        [Authorize(Roles = "CounterpartyEdit")]
+        [Authorize(Roles = "ReferenceEdit")]
         public async Task<ApiResult<bool>> SaveCounterparty([FromBody] DTO.Counterparty counterparty)
         {
             try
             {
-                var cp = await dbContext.Counterparties.
-                    FirstOrDefaultAsync(x => x.Id == counterparty.Id);
-
-                if(cp == null)
+                Counterparty cp;
+                if (counterparty.Id != default)
                 {
-                    return new ApiResult<bool>(false, "Элемент справочника не найден!");
+                    cp = await dbContext.Counterparties.
+                        FirstOrDefaultAsync(x => x.Id == counterparty.Id);
+                    if (cp == null)
+                    {
+                        return new ApiResult<bool>(false, "Элемент справочника не найден!");
+                    }
+                }
+                else
+                {
+                    cp = new Counterparty();
+                    dbContext.Add(cp);
                 }
 
                 var cpType = counterparty.IsSupplier ? CounterpartyTypes.Supplier : CounterpartyTypes.Customer;

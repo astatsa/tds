@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDSServer.Models;
 using TDSServer.Services;
+using DTO = TDSDTO.Documents;
 
 namespace TDSServer.Controllers
 {
@@ -83,5 +84,36 @@ namespace TDSServer.Controllers
 
             return new ApiResult<bool>(true);
         }
+
+        [HttpGet]
+        [Authorize(Roles = "OrderRead")]
+        public Task<List<DTO.Order>> GetOrders() =>
+            dbContext
+            .Orders
+            .Include(x => x.Customer)
+            .Include(x => x.Supplier)
+            .Include(x => x.Material)
+            .Include(x => x.OrderState)
+            .Include(x => x.Driver)
+            .Select(x => new DTO.Order
+            {
+                Id = x.Id,
+                Date = x.Date,
+                Number = x.Number,
+                DateCreate = x.DateCreate,
+                Volume = x.Volume,
+                CustomerId = x.CustomerId,
+                CustomerName = x.Customer.Name,
+                SupplierId = x.SupplierId,
+                SupplierName = x.Supplier.Name,
+                MaterialId = x.MaterialId,
+                MaterialName = x.Material.Name,
+                DriverId = x.DriverId,
+                DriverName = x.Driver.Name,
+                IsDeleted = x.IsDeleted,
+                OrderStateId = x.OrderState.Id,
+                OrderStateName = x.OrderState.FullName
+            })
+            .ToListAsync();
     }
 }

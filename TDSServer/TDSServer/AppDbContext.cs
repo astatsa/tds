@@ -41,13 +41,8 @@ namespace TDSServer
             {
                 new Permission { Id = 1, Name = "MobileApp", FullName = "Мобильное приложение" },
                 new Permission { Id = 2, Name = "OrderRead", FullName = "Чтение заявок" },
-                new Permission { Id = 3, Name = "EmployeeRead", FullName = "Чтение справочника сотрудников" },
-                new Permission { Id = 4, Name = "PositionRead", FullName = "Чтение справочника должностей" },
-                new Permission { Id = 5, Name = "CounterpartyRead", FullName = "Чтение справочника контрагентов" },
-                new Permission { Id = 6, Name = "UserRead", FullName = "Чтение справочника пользователей" },
-                new Permission { Id = 7, Name = "CounterpartyEdit", FullName = "Изменение справочника контрагентов" },
-                new Permission { Id = 8, Name = "UserEdit", FullName = "Изменение справочника пользователей" },
-                new Permission { Id = 9, Name = "EmployeeEdit", FullName = "Изменение справочника сотрудников" },
+                new Permission { Id = 3, Name = "ReferenceRead", FullName = "Чтение справочников" },
+                new Permission { Id = 4, Name = "ReferenceEdit", FullName = "Изменение справочников" }
             };
             var roles = new List<Role>
             {
