@@ -7,9 +7,9 @@ namespace TDSDTO.References
 {
     public class Position : BaseModel
     {
-        [DisplayName("Наименование")]
+        [DisplayFormat("Наименование")]
         public string Name { get; set; }
-        [DisplayName("Описание")]
+        [DisplayFormat("Описание")]
         public string Description { get; set; }
     }
 }

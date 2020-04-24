@@ -7,9 +7,9 @@ namespace TDSDTO.References
 {
     public class User : BaseModel
     {
-        [DisplayName("Пользователь")]
+        [DisplayFormat("Пользователь")]
         public string Username { get; set; }
-        [DisplayName("Полное наименование")]
+        [DisplayFormat("Полное наименование")]
         public string FullName { get; set; }
     }
 }

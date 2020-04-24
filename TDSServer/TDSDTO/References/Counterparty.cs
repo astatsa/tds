@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-
-namespace TDSDTO.References
+﻿namespace TDSDTO.References
 {
     public class Counterparty : BaseModel
     {
-        [DisplayName("Наименование")]
+        [DisplayFormat("Наименование")]
         public string Name { get; set; }
-        [DisplayName("Адрес")]
+        [DisplayFormat("Адрес")]
         public string Address { get; set; }
-        [DisplayName("Описание")]
+        [DisplayFormat("Описание")]
         public string Description { get; set; }
-        [DisplayName("Тип")]
+        [DisplayFormat("Тип")]
         public string TypeName { get; set; }
         public bool IsSupplier { get; set; }
     }

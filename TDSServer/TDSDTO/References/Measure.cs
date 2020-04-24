@@ -8,9 +8,9 @@ namespace TDSDTO.References
 {
     public class Measure : BaseModel
     {
-        [DisplayName("Краткое наименование")]
+        [DisplayFormat("Краткое наименование")]
         public string Name { get; set; }
-        [DisplayName("Полное наименование")]
+        [DisplayFormat("Полное наименование")]
         public string FullName { get; set; }
     }
 }

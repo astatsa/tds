@@ -5,27 +5,27 @@ namespace TDSDTO.Documents
 {
     public class Order : BaseModel
     {
-        [DisplayName("Дата")]
+        [DisplayFormat("Дата", "dd.MM.yyyy")]
         public DateTime Date { get; set; }
-        [DisplayName("Номер")]
+        [DisplayFormat("Номер")]
         public int Number { get; set; }
         public int SupplierId { get; set; }
-        [DisplayName("Поставщик")]
+        [DisplayFormat("Поставщик")]
         public string SupplierName { get; set; }
         public int CustomerId { get; set; }
-        [DisplayName("Покупатель")]
+        [DisplayFormat("Покупатель")]
         public string CustomerName { get; set; }
         public int MaterialId { get; set; }
-        [DisplayName("Материал")]
+        [DisplayFormat("Материал")]
         public string MaterialName { get; set; }
         public int DriverId { get; set; }
-        [DisplayName("Водитель")]
+        [DisplayFormat("Водитель")]
         public string DriverName { get; set; }
-        [DisplayName("Объем")]
+        [DisplayFormat("Объем", horizontalAlignment: Alignments.Right)]
         public double Volume { get; set; }
         public DateTime DateCreate { get; set; }
         public int OrderStateId { get; set; }
-        [DisplayName("Статус")]
+        [DisplayFormat("Статус")]
         public string OrderStateName { get; set; }
     }
 }
