@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using TDSDTO;
 using TDSServer.Models;
 using DTO = TDSDTO.References;
 
@@ -15,7 +16,7 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class EmployeesController : ControllerBase
+    public class EmployeesController : BaseTDSController
     {
         private readonly AppDbContext dbContext;
         public EmployeesController(AppDbContext dbContext)
@@ -30,22 +31,32 @@ namespace TDSServer.Controllers
 
         [HttpGet]
         [Authorize(Roles = "ReferenceRead")]
-        public Task<List<DTO.Employee>> GetEmployees() =>
-            dbContext.Employees
-                .Include(x => x.User)
-                .Include(x => x.Position)
-                .Select(x => new DTO.Employee
-                {
-                    Name = x.Name,
-                    FullName = x.FullName,
-                    UserId = x.UserId,
-                    PositionId = x.PositionId,
-                    PositionName = x.Position.Name,
-                    UserName = x.User.FullName,
-                    Id = x.Id,  
-                    IsDeleted = x.IsDeleted
-                })
-                .ToListAsync();
+        public async Task<ApiResult<List<DTO.Employee>>> GetEmployees()
+        {
+            try
+            {
+                return ApiResult(
+                    await dbContext.Employees
+                        .Include(x => x.User)
+                        .Include(x => x.Position)
+                        .Select(x => new DTO.Employee
+                        {
+                            Name = x.Name,
+                            FullName = x.FullName,
+                            UserId = x.UserId,
+                            PositionId = x.PositionId,
+                            PositionName = x.Position.Name,
+                            UserName = x.User.FullName,
+                            Id = x.Id,
+                            IsDeleted = x.IsDeleted
+                        })
+                        .ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return ApiResult<List<DTO.Employee>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+        }
 
         [HttpPost]
         [Authorize(Roles = "ReferenceEdit")]

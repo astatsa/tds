@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TDSDTO;
 using TDSServer.Models;
 using TDSServer.Services;
 using DTO = TDSDTO.Documents;
@@ -15,7 +16,7 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class OrdersController : ControllerBase
+    public class OrdersController : BaseTDSController
     {
         private readonly AppDbContext dbContext;
         public OrdersController(AppDbContext dbContext)
@@ -87,33 +88,43 @@ namespace TDSServer.Controllers
 
         [HttpGet]
         [Authorize(Roles = "OrderRead")]
-        public Task<List<DTO.Order>> GetOrders() =>
-            dbContext
-            .Orders
-            .Include(x => x.Customer)
-            .Include(x => x.Supplier)
-            .Include(x => x.Material)
-            .Include(x => x.OrderState)
-            .Include(x => x.Driver)
-            .Select(x => new DTO.Order
+        public async Task<ApiResult<List<DTO.Order>>> GetOrders()
+        {
+            try
             {
-                Id = x.Id,
-                Date = x.Date,
-                Number = x.Number,
-                DateCreate = x.DateCreate,
-                Volume = x.Volume,
-                CustomerId = x.CustomerId,
-                CustomerName = x.Customer.Name,
-                SupplierId = x.SupplierId,
-                SupplierName = x.Supplier.Name,
-                MaterialId = x.MaterialId,
-                MaterialName = x.Material.Name,
-                DriverId = x.DriverId,
-                DriverName = x.Driver.Name,
-                IsDeleted = x.IsDeleted,
-                OrderStateId = x.OrderState.Id,
-                OrderStateName = x.OrderState.FullName
-            })
-            .ToListAsync();
+                return ApiResult(await 
+                    dbContext
+                    .Orders
+                    .Include(x => x.Customer)
+                    .Include(x => x.Supplier)
+                    .Include(x => x.Material)
+                    .Include(x => x.OrderState)
+                    .Include(x => x.Driver)
+                    .Select(x => new DTO.Order
+                    {
+                        Id = x.Id,
+                        Date = x.Date,
+                        Number = x.Number,
+                        DateCreate = x.DateCreate,
+                        Volume = x.Volume,
+                        CustomerId = x.CustomerId,
+                        CustomerName = x.Customer.Name,
+                        SupplierId = x.SupplierId,
+                        SupplierName = x.Supplier.Name,
+                        MaterialId = x.MaterialId,
+                        MaterialName = x.Material.Name,
+                        DriverId = x.DriverId,
+                        DriverName = x.Driver.Name,
+                        IsDeleted = x.IsDeleted,
+                        OrderStateId = x.OrderState.Id,
+                        OrderStateName = x.OrderState.FullName
+                    })
+                    .ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return ApiResult<List<DTO.Order>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TDSServer.Models;
+using TDSDTO;
 
 namespace TDSServer.Controllers
 {

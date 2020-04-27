@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TDSDTO;
 using TDSServer.Models;
 using DTO = TDSDTO.References;
 
@@ -14,7 +16,7 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class MeasuresController : ControllerBase
+    public class MeasuresController : BaseTDSController
     {
         private readonly AppDbContext dbContext;
 
@@ -25,17 +27,21 @@ namespace TDSServer.Controllers
 
         [Authorize(Roles = "ReferenceRead")]
         [HttpGet]
-        public Task<List<DTO.Measure>> GetMeasures() =>
-            dbContext
-            .Measures
-            .Select(x => new DTO.Measure
+        public async Task<ApiResult<List<DTO.Measure>>> GetMeasures()
+        {
+            try
             {
-                Id = x.Id,
-                FullName = x.FullName,
-                IsDeleted = x.IsDeleted,
-                Name = x.Name
-            })
-            .ToListAsync();
+                return ApiResult(
+                    await dbContext
+                    .Measures
+                    .ProjectToType<DTO.Measure>()
+                    .ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return ApiResult<List<DTO.Measure>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+        }
 
         [HttpPost]
         [Authorize(Roles = "ReferenceEdit")]

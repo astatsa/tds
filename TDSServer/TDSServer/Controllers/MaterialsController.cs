@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TDSDTO;
 using TDSServer.Models;
 using DTO = TDSDTO.References;
 
@@ -25,20 +26,30 @@ namespace TDSServer.Controllers
 
         [HttpGet]
         [Authorize(Roles = "ReferenceRead")]
-        public Task<List<DTO.Material>> GetMaterials() =>
-            dbContext
-            .Materials
-            .Include(x => x.Measure)
-            .Select(x => new DTO.Material
+        public async Task<ApiResult<List<DTO.Material>>> GetMaterials()
+        {
+            try
             {
-                Id = x.Id,
-                IsDeleted = x.IsDeleted,
-                Name = x.Name,
-                Description = x.Description,
-                MeasureId = x.MeasureId,
-                MeasureName = x.Measure.Name
-            })
-            .ToListAsync();
+                return ApiResult(
+                    await dbContext
+                    .Materials
+                    .Include(x => x.Measure)
+                    .Select(x => new DTO.Material
+                    {
+                        Id = x.Id,
+                        IsDeleted = x.IsDeleted,
+                        Name = x.Name,
+                        Description = x.Description,
+                        MeasureId = x.MeasureId,
+                        MeasureName = x.Measure.Name
+                    })
+                    .ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return ApiResult<List<DTO.Material>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+        }
 
         [HttpPost]
         [Authorize(Roles = "ReferenceEdit")]

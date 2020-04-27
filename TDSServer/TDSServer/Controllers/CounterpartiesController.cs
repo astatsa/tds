@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TDSDTO;
 using TDSServer.Models;
 using DTO = TDSDTO.References;
 
@@ -16,7 +17,7 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class CounterpartiesController : ControllerBase
+    public class CounterpartiesController : BaseTDSController
     {
         private readonly AppDbContext dbContext;
 
@@ -27,20 +28,30 @@ namespace TDSServer.Controllers
 
         [Authorize(Roles = "ReferenceRead")]
         [HttpGet]
-        public Task<List<DTO.Counterparty>> GetCounterparties() =>
-            dbContext.Counterparties
-            .Include(x => x.Type)
-            .Select(x => new DTO.Counterparty
+        public async Task<ApiResult<List<DTO.Counterparty>>> GetCounterparties()
+        {
+            try
             {
-                Name = x.Name,
-                Address = x.Address,
-                Description = x.Description,
-                TypeName = x.Type.Name == Models.CounterpartyTypes.Customer ? "Покупатель" : "Поставщик",
-                Id = x.Id,
-                IsDeleted = x.IsDeleted,
-                IsSupplier = x.Type.Name == Models.CounterpartyTypes.Supplier
-            })
-            .ToListAsync();
+                return ApiResult(
+                    await dbContext.Counterparties
+                    .Include(x => x.Type)
+                    .Select(x => new DTO.Counterparty
+                    {
+                        Name = x.Name,
+                        Address = x.Address,
+                        Description = x.Description,
+                        TypeName = x.Type.Name == Models.CounterpartyTypes.Customer ? "Покупатель" : "Поставщик",
+                        Id = x.Id,
+                        IsDeleted = x.IsDeleted,
+                        IsSupplier = x.Type.Name == Models.CounterpartyTypes.Supplier
+                    })
+                    .ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return ApiResult<List<DTO.Counterparty>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+        }
 
         [HttpPost]
         [Authorize(Roles = "ReferenceEdit")]

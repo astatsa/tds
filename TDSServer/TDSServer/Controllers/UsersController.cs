@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TDSDTO;
 using DTO = TDSDTO.References;
 
 namespace TDSServer.Controllers
@@ -13,7 +15,7 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseTDSController
     {
         private readonly AppDbContext dbContext;
 
@@ -24,15 +26,19 @@ namespace TDSServer.Controllers
 
         [HttpGet]
         [Authorize(Roles = "ReferenceRead")]
-        public Task<List<DTO.User>> GetUsers() =>
-            dbContext.Users
-            .Select(x => new DTO.User
+        public async Task<ApiResult<List<DTO.User>>> GetUsers()
+        {
+            try
             {
-                Username = x.Username,
-                FullName = x.FullName,
-                Id = x.Id,
-                IsDeleted = x.IsDeleted
-            })
-            .ToListAsync();
+                return ApiResult(
+                    await dbContext.Users
+                    .ProjectToType<DTO.User>()
+                    .ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return ApiResult<List<DTO.User>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+        }
     }
 }

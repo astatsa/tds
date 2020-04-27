@@ -8,11 +8,11 @@ namespace TDSDTO.Filter
 {
     public abstract class Filter
     {
-        public Predicate<T> GetPredicate<T>()
+        public Func<T, bool> GetPredicate<T>()
         {
             var parameter = Expression.Parameter(typeof(T), "x");
             return Expression
-                .Lambda<Predicate<T>>(GetExpression(parameter), parameter)
+                .Lambda<Func<T, bool>>(GetExpression(parameter), parameter)
                 .Compile();
         }
 
@@ -90,6 +90,11 @@ namespace TDSDTO.Filter
                     return Expression.GreaterThanOrEqual(left, right);
                 case ConditionOperation.NotEqual:
                     return Expression.NotEqual(left, right);
+                case ConditionOperation.Contains:
+                    return Expression.Call(
+                        Expression.Call(left, "ToString", null, null),
+                        "Contains", null, 
+                        Expression.Call(right, "ToString", null, null));
 
             };
             return Expression.Equal(left, right);
@@ -130,7 +135,8 @@ namespace TDSDTO.Filter
         Less,
         GreaterEqual,
         LessEqual,
-        NotEqual
+        NotEqual,
+        Contains
     }
 
     public enum ConditionGroupOperation
