@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -100,6 +101,9 @@ namespace TDSServer.Controllers
                     .Include(x => x.Material)
                     .Include(x => x.OrderState)
                     .Include(x => x.Driver)
+                    .OrderBy(x => x.Date)
+                    .ThenBy(x => x.Number)
+                    .ThenBy(x => x.Id)
                     .Select(x => new DTO.Order
                     {
                         Id = x.Id,
@@ -125,6 +129,50 @@ namespace TDSServer.Controllers
             {
                 return ApiResult<List<DTO.Order>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "OrderEdit")]
+        public async Task<ApiResult<bool>> SaveOrder([FromBody] DTO.Order order)
+        {
+            if(order == null)
+                return ApiResult(false, "Нет данных для записи!");
+
+            Order orderModel;
+            if(order.Id == default)
+            {
+                orderModel = new Order();
+                dbContext.Add(orderModel);
+            }
+            else
+            {
+                orderModel = await dbContext
+                    .Orders
+                    .FirstOrDefaultAsync(x => x.Id == order.Id);
+                if (orderModel == null)
+                    return ApiResult(false, "Документ не найден!");
+            }
+
+            try
+            {
+                order.Adapt(orderModel);
+                if(orderModel.Number == default)
+                {
+                    orderModel.Number = await dbContext.Orders.MaxAsync(x => x.Number) + 1;
+                }
+                if(orderModel.OrderState == null)
+                {
+                    orderModel.OrderState = dbContext
+                        .OrderStates
+                        .FirstOrDefault(x => x.Name == OrderStates.New);
+                }
+                await dbContext.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                return ApiResult(false, $"{ex.Message}\n{ex.InnerException.Message}");
+            }
+            return ApiResult(true);
         }
     }
 }

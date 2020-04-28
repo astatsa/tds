@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDSDTO;
+using TDSDTO.Filter;
 using TDSServer.Models;
 using DTO = TDSDTO.References;
 
@@ -28,12 +30,12 @@ namespace TDSServer.Controllers
 
         [Authorize(Roles = "ReferenceRead")]
         [HttpGet]
-        public async Task<ApiResult<List<DTO.Counterparty>>> GetCounterparties()
+        public async Task<ApiResult<List<DTO.Counterparty>>> GetCounterparties([FromBody] FilterConditionGroup filter = null)
         {
             try
             {
-                return ApiResult(
-                    await dbContext.Counterparties
+                var predicate = filter?.GetPredicate<DTO.Counterparty>() ?? (x => true);
+                var res = await dbContext.Counterparties
                     .Include(x => x.Type)
                     .Select(x => new DTO.Counterparty
                     {
@@ -45,7 +47,9 @@ namespace TDSServer.Controllers
                         IsDeleted = x.IsDeleted,
                         IsSupplier = x.Type.Name == Models.CounterpartyTypes.Supplier
                     })
-                    .ToListAsync());
+                    .ToListAsync();
+                
+                return ApiResult(res.Where(predicate).ToList());
             }
             catch(Exception ex)
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -57,7 +58,7 @@ namespace TDSServer
                     };
                 });
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson().AddMvcOptions(x => x.AllowEmptyInputInBodyModelBinding = true);
             services.AddScoped<IUserService, UserService>();
         }
 

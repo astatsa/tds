@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
 
 namespace TDSDTO.Filter
 {
@@ -34,7 +33,7 @@ namespace TDSDTO.Filter
         {
             this.FieldName = name;
         }
-        
+
         public string FieldName { get; set; }
     }
 
@@ -93,7 +92,7 @@ namespace TDSDTO.Filter
                 case ConditionOperation.Contains:
                     return Expression.Call(
                         Expression.Call(left, "ToString", null, null),
-                        "Contains", null, 
+                        "Contains", null,
                         Expression.Call(right, "ToString", null, null));
 
             };
@@ -102,18 +101,19 @@ namespace TDSDTO.Filter
     }
 
     public class FilterConditionGroup : Filter
-    { 
+    {
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.Auto)]
         public FilterConditionCollection Conditions { get; set; }
         public ConditionGroupOperation Operation { get; set; } = ConditionGroupOperation.And;
 
         internal override Expression GetExpression(ParameterExpression parameter)
         {
-            if(Conditions == null || Conditions.Count == 0)
+            if (Conditions == null || Conditions.Count == 0)
                 return Expression.Lambda(Expression.Constant(true), parameter);
 
             var operation = GetOperator();
             var expression = Conditions[0].GetExpression(parameter);
-            for(int i = 1; i < Conditions.Count; i++)
+            for (int i = 1; i < Conditions.Count; i++)
             {
                 expression = operation(expression, Conditions[i].GetExpression(parameter));
             }
@@ -122,8 +122,8 @@ namespace TDSDTO.Filter
 
         private Func<Expression, Expression, Expression> GetOperator()
         {
-            return Operation == ConditionGroupOperation.Or 
-                ? Expression.Or 
+            return Operation == ConditionGroupOperation.Or
+                ? Expression.Or
                 : (Func<Expression, Expression, Expression>)Expression.And;
         }
     }

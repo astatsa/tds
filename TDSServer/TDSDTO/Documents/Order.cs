@@ -6,7 +6,7 @@ namespace TDSDTO.Documents
     public class Order : BaseModel
     {
         [DisplayFormat("Дата", "dd.MM.yyyy")]
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
         [DisplayFormat("Номер")]
         public int Number { get; set; }
         public int SupplierId { get; set; }
