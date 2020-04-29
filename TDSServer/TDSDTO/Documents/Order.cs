@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using TDSDTO.References;
 
 namespace TDSDTO.Documents
 {

@@ -19,13 +19,10 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class CounterpartiesController : BaseTDSController
+    public class CounterpartiesController : BaseReferenceController<Models.Counterparty, DTO.Counterparty>
     {
-        private readonly AppDbContext dbContext;
-
-        public CounterpartiesController(AppDbContext dbContext)
+        public CounterpartiesController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [Authorize(Roles = "ReferenceRead")]
@@ -63,7 +60,7 @@ namespace TDSServer.Controllers
         {
             try
             {
-                Counterparty cp;
+                Models.Counterparty cp;
                 if (counterparty.Id != default)
                 {
                     cp = await dbContext.Counterparties.
@@ -75,7 +72,7 @@ namespace TDSServer.Controllers
                 }
                 else
                 {
-                    cp = new Counterparty();
+                    cp = new Models.Counterparty();
                     dbContext.Add(cp);
                 }
 

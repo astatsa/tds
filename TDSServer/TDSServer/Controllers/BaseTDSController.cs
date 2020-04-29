@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using TDSDTO;
 
 namespace TDSServer.Controllers
 {
-    public class BaseTDSController : ControllerBase
+    public abstract class BaseTDSController : ControllerBase
     {
         protected ApiResult<T> ApiResult<T>(T result, string error = null)
         {
@@ -14,6 +15,5 @@ namespace TDSServer.Controllers
         {
             return new ApiResult<T>();
         }
-
     }
 }

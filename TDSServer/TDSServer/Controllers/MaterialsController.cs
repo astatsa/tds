@@ -15,13 +15,10 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class MaterialsController : BaseTDSController
+    public class MaterialsController : BaseReferenceController<Models.Material, DTO.Material>
     {
-        private readonly AppDbContext dbContext;
-
-        public MaterialsController(AppDbContext dbContext)
+        public MaterialsController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [HttpGet]

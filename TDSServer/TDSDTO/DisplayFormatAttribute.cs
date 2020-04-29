@@ -11,13 +11,16 @@ namespace TDSDTO
         public string Format { get; }
         public double MinWidth { get; }
         public Alignments HorizontalAlignment { get; }
+        public string MemberName { get; }
 
-        public DisplayFormatAttribute(string displayName, string format = null, double minWidth = 0, Alignments horizontalAlignment = Alignments.Left)
+        public DisplayFormatAttribute(string displayName, string format = null, double minWidth = 0, Alignments horizontalAlignment = Alignments.Left,
+            string memberName = null)
         {
             this.DisplayName = displayName;
             this.Format = format;
             this.MinWidth = minWidth;
             this.HorizontalAlignment = horizontalAlignment;
+            this.MemberName = memberName;
         }
     }
 
