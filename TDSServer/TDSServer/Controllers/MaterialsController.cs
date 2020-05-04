@@ -50,36 +50,7 @@ namespace TDSServer.Controllers
 
         [HttpPost]
         [Authorize(Roles = "ReferenceEdit")]
-        public async Task<ApiResult<bool>> SaveMeasures([FromBody] DTO.Material material)
-        {
-            try
-            {
-                Material m;
-                if (material.Id != default)
-                {
-                    m = await dbContext.Materials.
-                        FirstOrDefaultAsync(x => x.Id == material.Id);
-                    if (m == null)
-                    {
-                        return ApiResult(false, "Элемент справочника не найден!");
-                    }
-                }
-                else
-                {
-                    m = new Material();
-                    dbContext.Add(m);
-                }
-
-                m.Name = material.Name;
-                m.MeasureId = material.MeasureId;
-
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return ApiResult(false, ex.Message);
-            }
-            return ApiResult(true);
-        }
+        public Task<ApiResult<bool>> SaveMeasures([FromBody] DTO.Material material)
+            => Save(material);
     }
 }

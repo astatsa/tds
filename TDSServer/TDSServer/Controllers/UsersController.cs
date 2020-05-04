@@ -15,13 +15,10 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UsersController : BaseTDSController
+    public class UsersController : BaseReferenceController<Models.User, DTO.User>
     {
-        private readonly AppDbContext dbContext;
-
-        public UsersController(AppDbContext dbContext)
+        public UsersController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [HttpGet]
@@ -40,5 +37,10 @@ namespace TDSServer.Controllers
                 return ApiResult<List<DTO.User>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
         }
+
+        [HttpPost]
+        [Authorize(Roles = "UserEdit")]
+        public Task<ApiResult<bool>> SaveUsers([FromBody] DTO.User user)
+            => Save(user);
     }
 }

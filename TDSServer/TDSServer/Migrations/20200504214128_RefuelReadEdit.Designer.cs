@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TDSServer;
 
 namespace TDSServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200504214128_RefuelReadEdit")]
+    partial class RefuelReadEdit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -411,13 +413,6 @@ namespace TDSServer.Migrations
                             FullName = "Изменение дозаправок",
                             IsDeleted = false,
                             Name = "RefuelEdit"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            FullName = "Изменение пользователей",
-                            IsDeleted = false,
-                            Name = "UserEdit"
                         });
                 });
 
@@ -573,11 +568,6 @@ namespace TDSServer.Migrations
                         new
                         {
                             PermissionId = 7,
-                            RoleId = 1
-                        },
-                        new
-                        {
-                            PermissionId = 8,
                             RoleId = 1
                         });
                 });

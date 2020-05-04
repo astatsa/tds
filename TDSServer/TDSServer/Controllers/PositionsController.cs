@@ -16,13 +16,10 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class PositionsController : BaseTDSController
+    public class PositionsController : BaseReferenceController<Models.Position, DTO.Position>
     {
-        private readonly AppDbContext dbContext;
-
-        public PositionsController(AppDbContext dbContext)
+        public PositionsController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [HttpGet]
@@ -41,5 +38,10 @@ namespace TDSServer.Controllers
                 return ApiResult<List<DTO.Position>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
         }
+
+        [HttpPost]
+        [Authorize(Roles = "ReferenceEdit")]
+        public Task<ApiResult<bool>> SavePosition([FromBody] DTO.Position position)
+            => Save(position);
     }
 }

@@ -17,12 +17,10 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class OrdersController : BaseTDSController
+    public class OrdersController : BaseReferenceController<Models.Order, DTO.Order>
     {
-        private readonly AppDbContext dbContext;
-        public OrdersController(AppDbContext dbContext)
+        public OrdersController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [HttpGet("employee/{employeeId}")]

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using TDSDTO;
 using TDSServer.Models;
 using DTO = TDSDTO.References;
@@ -16,12 +17,10 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class GasStationsController : BaseTDSController
+    public class GasStationsController : BaseReferenceController<Models.GasStation, DTO.GasStation>
     {
-        private readonly AppDbContext dbContext;
-        public GasStationsController(AppDbContext dbContext)
+        public GasStationsController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [HttpGet("actual")]
@@ -58,5 +57,10 @@ namespace TDSServer.Controllers
                 return ApiResult<List<DTO.GasStation>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
         }
+
+        [HttpPost]
+        [Authorize(Roles = "ReferenceEdit")]
+        public Task<ApiResult<bool>> SaveGasStation([FromBody] DTO.GasStation station)
+            => Save(station);
     }
 }

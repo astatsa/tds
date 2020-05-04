@@ -11,9 +11,10 @@ using TDSDTO;
 
 namespace TDSServer.Controllers
 {
-    public abstract class BaseReferenceController<TModel, TDTO> : BaseTDSController where TModel : Models.BaseModel where TDTO : TDSDTO.BaseModel
+    public abstract class BaseReferenceController<TModel, TDTO> : BaseTDSController where TModel : Models.BaseModel, new() 
+        where TDTO : TDSDTO.BaseModel, new()
     {
-        protected AppDbContext dbContext;
+        protected readonly AppDbContext dbContext;
 
         public BaseReferenceController(AppDbContext dbContext)
         {
@@ -63,6 +64,38 @@ namespace TDSServer.Controllers
                 return ApiResult(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
             return ApiResult(true);
+        }
+
+        protected async Task<ApiResult<bool>> Save(TDTO dto)
+        {
+            try
+            {
+                TModel model;
+                if (dto.Id != default)
+                {
+                    model = await dbContext
+                        .Set<TModel>().
+                        FirstOrDefaultAsync(x => x.Id == dto.Id);
+                    if (model == null)
+                    {
+                        return new ApiResult<bool>(false, "Элемент справочника не найден!");
+                    }
+                }
+                else
+                {
+                    model = new TModel();
+                    dbContext.Add(model);
+                }
+
+                dto.Adapt(model);
+
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return new ApiResult<bool>(false, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+            return new ApiResult<bool>(true);
         }
     }
 }

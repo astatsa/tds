@@ -16,13 +16,10 @@ namespace TDSServer.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class MeasuresController : BaseTDSController
+    public class MeasuresController : BaseReferenceController<Models.Measure, DTO.Measure>
     {
-        private readonly AppDbContext dbContext;
-
-        public MeasuresController(AppDbContext dbContext)
+        public MeasuresController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [Authorize(Roles = "ReferenceRead")]
@@ -45,36 +42,7 @@ namespace TDSServer.Controllers
 
         [HttpPost]
         [Authorize(Roles = "ReferenceEdit")]
-        public async Task<ApiResult<bool>> SaveMeasures([FromBody] DTO.Measure measure)
-        {
-            try
-            {
-                Measure m;
-                if (measure.Id != default)
-                {
-                    m = await dbContext.Measures.
-                        FirstOrDefaultAsync(x => x.Id == measure.Id);
-                    if (m == null)
-                    {
-                        return new ApiResult<bool>(false, "Элемент справочника не найден!");
-                    }
-                }
-                else
-                {
-                    m = new Measure();
-                    dbContext.Add(m);
-                }
-
-                m.Name = measure.Name;
-                m.FullName = measure.FullName;
-
-                await dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return new ApiResult<bool>(false, ex.Message);
-            }
-            return new ApiResult<bool>(true);
-        }
+        public Task<ApiResult<bool>> SaveMeasures([FromBody] DTO.Measure measure)
+            => Save(measure);
     }
 }
