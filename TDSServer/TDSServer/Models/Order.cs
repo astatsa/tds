@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace TDSServer.Models
 {
-    public class Order : BaseModel
+    public class Order : DocumentBaseModel
     {
+        public Order() : base(1)
+        {
+        }
+
         public DateTime Date { get; set; }
         public int Number { get; set; }
         public int SupplierId { get; set; }

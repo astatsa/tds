@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDSDTO;
 using TDSServer.Models;
+using TDSServer.Repositories;
 using TDSServer.Services;
 using DTO = TDSDTO.Documents;
 
@@ -19,8 +20,10 @@ namespace TDSServer.Controllers
     [Authorize]
     public class OrdersController : BaseReferenceController<Models.Order, DTO.Order>
     {
-        public OrdersController(AppDbContext dbContext) : base(dbContext)
+        private readonly DbRepository dbRepository;
+        public OrdersController(AppDbContext dbContext, DbRepository dbRepository) : base(dbContext)
         {
+            this.dbRepository = dbRepository;
         }
 
         [HttpGet("employee/{employeeId}")]
@@ -55,7 +58,7 @@ namespace TDSServer.Controllers
                     .FirstOrDefaultAsync();
                 return new ApiResult<Order>(order);
             }
-            return new ApiResult<Order>(default, "Не удалось определить идентификатор пользователя!");
+            return ApiResult<Order>(default, "Не удалось определить идентификатор пользователя!");
         }
 
         [HttpPost("{id}")]
@@ -66,11 +69,11 @@ namespace TDSServer.Controllers
                 .Orders
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (order == null)
-                return new ApiResult<bool>(false, $"Заявка с id={id} не найдена!");
+                return ApiResult<bool>(false, $"Заявка с id={id} не найдена!");
 
             order.OrderState = await dbContext.OrderStates.FirstAsync(x => x.Name == state);
 
-            await dbContext.SaveChangesAsync();
+            //await dbContext.SaveChangesAsync();
 
             int.TryParse(HttpContext.User.Identity.Name, out int userId);
             dbContext.OrderStateHistories.Add(new OrderStateHistory
@@ -80,9 +83,16 @@ namespace TDSServer.Controllers
                 OrderState = order.OrderState,
                 UserId = userId
             });
+
+            //Изменение остатков материала
+            if(order.OrderState?.Name == OrderStates.Completed)
+            {
+                dbRepository.AddMovements<CounterpartyMaterialMvt, Order>(order);
+            }
+
             await dbContext.SaveChangesAsync();
 
-            return new ApiResult<bool>(true);
+            return ApiResult<bool>(true);
         }
 
         [HttpGet]
@@ -164,6 +174,24 @@ namespace TDSServer.Controllers
                         .OrderStates
                         .FirstOrDefault(x => x.Name == OrderStates.New);
                 }
+                
+                //Изменение остатков материала
+                //if (order.OrderState?.Name == OrderStates.Completed)
+                //{
+                    //dbRepository.AddMovements<CounterpartyMaterialMvt, Order>(orderModel,
+                    //    new [] 
+                    //    {  
+                    //        new CounterpartyMaterialMvt
+                    //        {
+                    //            CounterpartyId = orderModel.SupplierId,
+                    //            Date = DateTime.Now,
+                    //            IsComing = false,
+                    //            MaterialId = orderModel.MaterialId,
+                    //            Quantity = orderModel.Volume
+                    //        }
+                    //    });
+                //}
+
                 await dbContext.SaveChangesAsync();
             }
             catch(Exception ex)

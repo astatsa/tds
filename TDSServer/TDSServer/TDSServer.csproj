@@ -11,6 +11,8 @@
     <Compile Remove="Migrations\20200327211421_Initial.Designer.cs" />
     <Compile Remove="Migrations\20200404172840_YetAnother.cs" />
     <Compile Remove="Migrations\20200404172840_YetAnother.Designer.cs" />
+    <Compile Remove="Migrations\20200505225647_CounterpartyRestTotal.cs" />
+    <Compile Remove="Migrations\20200505225647_CounterpartyRestTotal.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

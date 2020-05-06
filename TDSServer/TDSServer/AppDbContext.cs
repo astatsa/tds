@@ -29,6 +29,9 @@ namespace TDSServer
         public DbSet<GasStation> GasStations { get; set; }
         public DbSet<Refuel> Refuels { get; set; }
         public DbSet<OrderStateHistory> OrderStateHistories { get; set; }
+        public DbSet<CounterpartyMaterialMvt> CounterpartyMaterialMvts { get; set; }
+        public DbSet<CounterpartyRestCorrection> CounterpartyRestCorrections { get; set; }
+        public DbSet<CounterpartyRestCorrectionMaterial> CounterpartyRestCorrectionMaterials { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
@@ -146,6 +149,11 @@ namespace TDSServer
                 .Entity<Employee>()
                 .HasOne(x => x.User)
                 .WithOne(x => x.Employee);
+
+            //CounterpartyMaterialMvt
+            modelBuilder
+                .Entity<CounterpartyMaterialMvt>()
+                .HasKey(x => new { x.CounterpartyId, x.MaterialId });
 
             base.OnModelCreating(modelBuilder);
         }

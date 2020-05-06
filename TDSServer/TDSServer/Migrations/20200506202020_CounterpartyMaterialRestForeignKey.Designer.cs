@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TDSServer;
 
 namespace TDSServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200506202020_CounterpartyMaterialRestForeignKey")]
+    partial class CounterpartyMaterialRestForeignKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,36 +48,6 @@ namespace TDSServer.Migrations
                     b.ToTable("Counterparties");
                 });
 
-            modelBuilder.Entity("TDSServer.Models.CounterpartyMaterialMvt", b =>
-                {
-                    b.Property<int>("CounterpartyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaterialId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsComing")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("double");
-
-                    b.Property<int>("RegistratorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RegistratorTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CounterpartyId", "MaterialId");
-
-                    b.HasIndex("MaterialId");
-
-                    b.ToTable("CounterpartyMaterialMvts");
-                });
-
             modelBuilder.Entity("TDSServer.Models.CounterpartyMaterialRest", b =>
                 {
                     b.Property<int>("CounterpartyId")
@@ -92,58 +64,6 @@ namespace TDSServer.Migrations
                     b.HasIndex("MaterialId");
 
                     b.ToTable("CounterpartyMaterialRests");
-                });
-
-            modelBuilder.Entity("TDSServer.Models.CounterpartyRestCorrection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("CounterpartyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CounterpartyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CounterpartyRestCorrections");
-                });
-
-            modelBuilder.Entity("TDSServer.Models.CounterpartyRestCorrectionMaterial", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<double>("Correction")
-                        .HasColumnType("double");
-
-                    b.Property<int>("CounterpartyRestCorrectionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MaterialId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CounterpartyRestCorrectionId");
-
-                    b.HasIndex("MaterialId");
-
-                    b.ToTable("CounterpartyRestCorrectionMaterials");
                 });
 
             modelBuilder.Entity("TDSServer.Models.CounterpartyType", b =>
@@ -730,58 +650,15 @@ namespace TDSServer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TDSServer.Models.CounterpartyMaterialMvt", b =>
-                {
-                    b.HasOne("TDSServer.Models.Counterparty", "Counterparty")
-                        .WithMany()
-                        .HasForeignKey("CounterpartyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TDSServer.Models.Material", "Material")
-                        .WithMany()
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("TDSServer.Models.CounterpartyMaterialRest", b =>
                 {
-                    b.HasOne("TDSServer.Models.Counterparty", "Counterparty")
+                    b.HasOne("TDSServer.Models.Counterparty", null)
                         .WithMany()
                         .HasForeignKey("CounterpartyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TDSServer.Models.Material", "Material")
-                        .WithMany()
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TDSServer.Models.CounterpartyRestCorrection", b =>
-                {
-                    b.HasOne("TDSServer.Models.Counterparty", "Counterparty")
-                        .WithMany()
-                        .HasForeignKey("CounterpartyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TDSServer.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("TDSServer.Models.CounterpartyRestCorrectionMaterial", b =>
-                {
-                    b.HasOne("TDSServer.Models.CounterpartyRestCorrection", null)
-                        .WithMany("MaterialCorrections")
-                        .HasForeignKey("CounterpartyRestCorrectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TDSServer.Models.Material", "Material")
+                    b.HasOne("TDSServer.Models.Material", null)
                         .WithMany()
                         .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Cascade)

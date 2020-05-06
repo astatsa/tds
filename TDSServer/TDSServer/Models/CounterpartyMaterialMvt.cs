@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TDSServer.Models
 {
-    public class CounterpartyMaterialRest
+    public class CounterpartyMaterialMvt : RegisterBaseModel
     {
         public int CounterpartyId { get; set; }
         [ForeignKey("CounterpartyId")]
@@ -14,6 +10,7 @@ namespace TDSServer.Models
         public int MaterialId { get; set; }
         [ForeignKey("MaterialId")]
         public Material Material { get; set; }
-        public double Rest { get; set; }
+        public bool IsComing { get; set; }
+        public double Quantity { get; set; }
     }
 }

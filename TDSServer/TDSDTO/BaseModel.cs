@@ -4,10 +4,15 @@ using System.Text;
 
 namespace TDSDTO
 {
-    public class BaseModel
+    public class BaseModel : ICloneable
     {
         public int Id { get; set; }
         public bool IsDeleted { get; set; }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
 
         public override bool Equals(object obj)
         {
