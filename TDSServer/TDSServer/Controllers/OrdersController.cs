@@ -85,10 +85,7 @@ namespace TDSServer.Controllers
             });
 
             //Изменение остатков материала
-            if(order.OrderState?.Name == OrderStates.Completed)
-            {
-                dbRepository.AddMovements<CounterpartyMaterialMvt, Order>(order);
-            }
+            AddMovements(order);
 
             await dbContext.SaveChangesAsync();
 
@@ -174,23 +171,9 @@ namespace TDSServer.Controllers
                         .OrderStates
                         .FirstOrDefault(x => x.Name == OrderStates.New);
                 }
-                
-                //Изменение остатков материала
-                //if (order.OrderState?.Name == OrderStates.Completed)
-                //{
-                    //dbRepository.AddMovements<CounterpartyMaterialMvt, Order>(orderModel,
-                    //    new [] 
-                    //    {  
-                    //        new CounterpartyMaterialMvt
-                    //        {
-                    //            CounterpartyId = orderModel.SupplierId,
-                    //            Date = DateTime.Now,
-                    //            IsComing = false,
-                    //            MaterialId = orderModel.MaterialId,
-                    //            Quantity = orderModel.Volume
-                    //        }
-                    //    });
-                //}
+
+                //Запись движений
+                AddMovements(orderModel);
 
                 await dbContext.SaveChangesAsync();
             }
@@ -199,6 +182,35 @@ namespace TDSServer.Controllers
                 return ApiResult(false, $"{ex.Message}\n{ex.InnerException.Message}");
             }
             return ApiResult(true);
+        }
+
+        protected override void BeforeDelete(Order model)
+        {
+            base.BeforeDelete(model);
+            AddMovements(model);
+        }
+
+        private void AddMovements(Order model)
+        {
+            //Удаление движений документа
+            dbRepository.DeleteMovements<CounterpartyMaterialMvt, Order>(model);
+
+            //Запись движений
+            if (model.OrderState?.Name == OrderStates.Completed && !model.IsDeleted)
+            {
+                dbRepository.AddMovements<CounterpartyMaterialMvt, Order>(model,
+                        new[]
+                        {
+                            new CounterpartyMaterialMvt
+                            {
+                                CounterpartyId = model.SupplierId,
+                                Date = model.Date,
+                                IsComing = false,
+                                MaterialId = model.MaterialId,
+                                Quantity = model.Volume
+                            }
+                        });
+            }
         }
     }
 }

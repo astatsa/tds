@@ -42,7 +42,7 @@ namespace TDSServer.Controllers
 
         [HttpPost("delete/{id}")]
         [Authorize(Roles = "ReferenceEdit")]
-        public async Task<ApiResult<bool>> MarkUnmarkToRemove(int id)
+        public virtual async Task<ApiResult<bool>> MarkUnmarkToRemove(int id)
         {
             var entity = await dbContext
                 .Set<TModel>()
@@ -57,6 +57,7 @@ namespace TDSServer.Controllers
             
             try
             {
+                BeforeDelete(entity);
                 await dbContext.SaveChangesAsync();
             }
             catch(Exception ex)
@@ -64,6 +65,11 @@ namespace TDSServer.Controllers
                 return ApiResult(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
             return ApiResult(true);
+        }
+
+        protected virtual void BeforeDelete(TModel model)
+        {
+
         }
 
         protected async Task<ApiResult<bool>> Save(TDTO dto)
