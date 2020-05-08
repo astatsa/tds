@@ -27,6 +27,8 @@ namespace TDSServer.Models
         public Employee Driver { get; set; }
         public double Volume { get; set; }
         public DateTime DateCreate { get; set; }
+        public int OrderStateId { get; set; }
+        [ForeignKey("OrderStateId")]
         public OrderState OrderState { get; set; }
     }
 }

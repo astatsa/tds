@@ -85,7 +85,7 @@ namespace TDSServer.Controllers
                 dbContext.CounterpartyRestCorrections.Add(doc);
                 await dbContext.SaveChangesAsync();
 
-                repository.AddMovements<CounterpartyMaterialMvt, CounterpartyRestCorrection>(doc, 
+                repository.AddCounterpartyMaterialMovements(doc,
                     doc.MaterialCorrections
                     .Select(x => new CounterpartyMaterialMvt
                     {
@@ -94,27 +94,6 @@ namespace TDSServer.Controllers
                         MaterialId = x.MaterialId,
                         Quantity = x.Correction
                     }));
-
-                //Корректировка остатков
-                foreach(var r in doc.MaterialCorrections
-                    .GroupJoin(rests, x => x.MaterialId, x => x.MaterialId, (x, y) => new { Corr = x, Rests = y })
-                    .SelectMany(x => x.Rests.DefaultIfEmpty(),
-                        (x, y) => new
-                        {
-                            State = y == null ? EntityState.Added : EntityState.Unchanged,
-                            Entity = new Models.CounterpartyMaterialRest
-                            {
-                                CounterpartyId = doc.CounterpartyId,
-                                MaterialId = x.Corr.MaterialId,
-                                Rest = y == null ? x.Corr.Correction : y.Rest + x.Corr.Correction
-                            }
-                        }))
-                {
-                    var entry = dbContext.Attach(r.Entity);
-                    entry.State = r.State;
-                    if (r.State == EntityState.Unchanged)
-                        entry.Property(x => x.Rest).IsModified = true;
-                }
 
                 await dbContext.SaveChangesAsync();
                 dbContext.Database.CommitTransaction();

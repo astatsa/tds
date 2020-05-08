@@ -126,7 +126,7 @@ namespace TDSServer.Controllers
                         DriverId = x.DriverId,
                         DriverName = x.Driver.Name,
                         IsDeleted = x.IsDeleted,
-                        OrderStateId = x.OrderState.Id,
+                        OrderStateId = x.OrderStateId,
                         OrderStateName = x.OrderState.FullName
                     })
                     .AsNoTracking()
@@ -162,6 +162,8 @@ namespace TDSServer.Controllers
 
             try
             {
+                dbContext.Database.BeginTransaction();
+
                 order.Adapt(orderModel);
                 if(orderModel.Number == default)
                 {
@@ -169,19 +171,23 @@ namespace TDSServer.Controllers
                 }
                 if(orderModel.OrderState == null)
                 {
-                    orderModel.OrderState = dbContext
-                        .OrderStates
-                        .FirstOrDefault(x => x.Name == OrderStates.New);
+                    orderModel.OrderState = 
+                        orderModel.OrderStateId != default ? 
+                        dbContext.OrderStates.FirstOrDefault(x => x.Id == orderModel.OrderStateId) :
+                        dbContext.OrderStates.FirstOrDefault(x => x.Name == OrderStates.New);
                 }
+                await dbContext.SaveChangesAsync();
 
                 //Запись движений
                 AddMovements(orderModel);
 
                 await dbContext.SaveChangesAsync();
+                dbContext.Database.CommitTransaction();
             }
             catch(Exception ex)
             {
-                return ApiResult(false, $"{ex.Message}\n{ex.InnerException.Message}");
+                dbContext.Database.RollbackTransaction();
+                return ApiResult(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
             return ApiResult(true);
         }
@@ -194,18 +200,15 @@ namespace TDSServer.Controllers
 
         private void AddMovements(Order model)
         {
-            var rest = dbContext.CounterpartyMaterialRests
-                    .FirstOrDefault(x => x.CounterpartyId == model.SupplierId && x.MaterialId == model.MaterialId);
-
             //Удаление движений документа
-            dbRepository.DeleteMovements<CounterpartyMaterialMvt, Order>(model);
-            //rest.Rest += model.Volume;
+            dbRepository.DeleteCounterpartyMaterialMovements(model);
 
             //Запись движений
-            if (model.OrderState?.Name == OrderStates.Completed && !model.IsDeleted)
+
+            var completeId = dbContext.OrderStates.Where(x => x.Name == OrderStates.Completed).Select(x => x.Id).FirstOrDefault();
+            if (model.OrderStateId == completeId  && !model.IsDeleted)
             {
-                dbRepository.AddMovements<CounterpartyMaterialMvt, Order>(model,
-                        new[]
+                dbRepository.AddCounterpartyMaterialMovements(model, new[]
                         {
                             new CounterpartyMaterialMvt
                             {
@@ -213,10 +216,9 @@ namespace TDSServer.Controllers
                                 Date = model.Date,
                                 IsComing = false,
                                 MaterialId = model.MaterialId,
-                                Quantity = model.Volume
+                                Quantity = -model.Volume
                             }
                         });
-                //rest.Rest -= model.Volume;
             }
         }
     }
