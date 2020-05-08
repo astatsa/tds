@@ -16,6 +16,7 @@ namespace TDSServer.Models
         public int CounterpartyId { get; set; }
         [ForeignKey("CounterpartyId")]
         public Counterparty Counterparty { get; set; }
+        public int UserId { get; set; }
         [ForeignKey("UserId")]
         public User User { get; set; }
         public ICollection<CounterpartyRestCorrectionMaterial> MaterialCorrections { get; set; }

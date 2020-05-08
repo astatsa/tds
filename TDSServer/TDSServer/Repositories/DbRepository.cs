@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,11 @@ namespace TDSServer.Repositories
             .Where(x => x.RegistratorTypeId == document.DocumentTypeId && x.RegistratorId == document.Id);
 
         public void DeleteMovements<TRegister, TDoc>(TDoc document) where TDoc : DocumentBaseModel where TRegister : RegisterBaseModel
-            => dbContext
-            .Set<TRegister>()
-            .RemoveRange(GetDocumentMovements<TRegister, TDoc>(document));
+        {
+            dbContext
+                .Set<TRegister>()
+                .RemoveRange(GetDocumentMovements<TRegister, TDoc>(document));
+        }
 
         public void AddMovements<TRegister, TDoc>(TDoc document, IEnumerable<TRegister> movements) where TDoc : DocumentBaseModel where TRegister : RegisterBaseModel
             => dbContext

@@ -10,8 +10,8 @@ namespace TDSServer.Models
     public class CounterpartyRestCorrectionMaterial
     {
         public int Id { get; set; }
+        public int MaterialId { get; set; }
         [ForeignKey("MaterialId")]
-        [Required]
         public Material Material { get; set; }
         public double Correction { get; set; }
         public int CounterpartyRestCorrectionId { get; set; }

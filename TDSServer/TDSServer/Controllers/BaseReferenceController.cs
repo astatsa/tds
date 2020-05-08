@@ -14,11 +14,8 @@ namespace TDSServer.Controllers
     public abstract class BaseReferenceController<TModel, TDTO> : BaseTDSController where TModel : Models.BaseModel, new() 
         where TDTO : TDSDTO.BaseModel, new()
     {
-        protected readonly AppDbContext dbContext;
-
-        public BaseReferenceController(AppDbContext dbContext)
+        public BaseReferenceController(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
         [HttpGet("{id}")]

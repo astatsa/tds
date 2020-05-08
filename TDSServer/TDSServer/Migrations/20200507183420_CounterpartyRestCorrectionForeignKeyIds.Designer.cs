@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TDSServer;
 
 namespace TDSServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200507183420_CounterpartyRestCorrectionForeignKeyIds")]
+    partial class CounterpartyRestCorrectionForeignKeyIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,12 +50,6 @@ namespace TDSServer.Migrations
 
             modelBuilder.Entity("TDSServer.Models.CounterpartyMaterialMvt", b =>
                 {
-                    b.Property<int>("RegistratorTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RegistratorId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CounterpartyId")
                         .HasColumnType("int");
 
@@ -69,9 +65,13 @@ namespace TDSServer.Migrations
                     b.Property<double>("Quantity")
                         .HasColumnType("double");
 
-                    b.HasKey("RegistratorTypeId", "RegistratorId", "CounterpartyId", "MaterialId");
+                    b.Property<int>("RegistratorId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("CounterpartyId");
+                    b.Property<int>("RegistratorTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CounterpartyId", "MaterialId");
 
                     b.HasIndex("MaterialId");
 

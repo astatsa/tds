@@ -36,6 +36,7 @@ namespace TDSServer.Controllers
                 .Include(x => x.Material)
                 .Include(x => x.Supplier)
                 .Include(x => x.Customer)
+                .AsNoTracking()
                 .ToListAsync()
             };
 
@@ -128,6 +129,7 @@ namespace TDSServer.Controllers
                         OrderStateId = x.OrderState.Id,
                         OrderStateName = x.OrderState.FullName
                     })
+                    .AsNoTracking()
                     .ToListAsync());
             }
             catch(Exception ex)
@@ -192,8 +194,12 @@ namespace TDSServer.Controllers
 
         private void AddMovements(Order model)
         {
+            var rest = dbContext.CounterpartyMaterialRests
+                    .FirstOrDefault(x => x.CounterpartyId == model.SupplierId && x.MaterialId == model.MaterialId);
+
             //Удаление движений документа
             dbRepository.DeleteMovements<CounterpartyMaterialMvt, Order>(model);
+            //rest.Rest += model.Volume;
 
             //Запись движений
             if (model.OrderState?.Name == OrderStates.Completed && !model.IsDeleted)
@@ -210,6 +216,7 @@ namespace TDSServer.Controllers
                                 Quantity = model.Volume
                             }
                         });
+                //rest.Rest -= model.Volume;
             }
         }
     }

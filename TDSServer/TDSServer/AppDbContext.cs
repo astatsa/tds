@@ -153,7 +153,7 @@ namespace TDSServer
             //CounterpartyMaterialMvt
             modelBuilder
                 .Entity<CounterpartyMaterialMvt>()
-                .HasKey(x => new { x.CounterpartyId, x.MaterialId });
+                .HasKey(x => new { x.RegistratorTypeId, x.RegistratorId, x.CounterpartyId, x.MaterialId });
 
             base.OnModelCreating(modelBuilder);
         }
