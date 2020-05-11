@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using TDSDTO;
 using Xamarin.Forms;
 using XF.Material.Forms.UI;
 using XF.Material.Forms.UI.Dialogs;
@@ -76,7 +77,11 @@ namespace MobileApp.ViewModel
 
                 try
                 {
-                    var authResult = await api.Auth(new { Username, Password = GetPasswordHash() });
+                    var authResult = await api.Auth(new AuthModel
+                    { 
+                        Username = Username,
+                        Password = GetPasswordHash() 
+                    });
                     if (String.IsNullOrWhiteSpace(authResult.Token))
                     {
                         Message = "Ошибка авторизации!";

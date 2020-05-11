@@ -1,8 +1,8 @@
 ﻿using MobileApp.Api;
-using MobileApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TDSDTO.References;
 
 namespace MobileApp
 {

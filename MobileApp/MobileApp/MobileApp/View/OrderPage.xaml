@@ -61,7 +61,7 @@
 									    Style="{StaticResource TextLabel}"/>
                                 <material:MaterialLabel Grid.Row="1" Grid.Column="1"
 									    Style="{StaticResource PrimaryDataText}"
-									    Text="{Binding Order.Supplier.Name}"/>
+									    Text="{Binding Order.SupplierName}"/>
                                 <material:MaterialLabel Grid.Row="2"
                 									    Grid.Column="1"
 				                					    Text="{Binding Order.Supplier.Address}"
@@ -79,7 +79,7 @@
 									    Grid.Row="3"
 									    Style="{StaticResource TextLabel}"/>
                                 <material:MaterialLabel Grid.Row="3" Grid.Column="1"
-									    Text="{Binding Order.Customer.Name}"
+									    Text="{Binding Order.CustomerName}"
 									    Style="{StaticResource PrimaryDataText}"/>
                                 <material:MaterialLabel Grid.Row="4"
 									    Grid.Column="1"
@@ -98,7 +98,7 @@
 									    Style="{StaticResource PrimaryDataText}">
                                     <material:MaterialLabel.FormattedText>
                                         <FormattedString>
-                                            <Span Text="{Binding Order.Material}"/>
+                                            <Span Text="{Binding Order.MaterialName}"/>
                                             <Span Text="{Binding Order.Volume, StringFormat=' {0} '}"/>
                                             <Span Text="{Binding Order.Material.Measure}"/>
                                         </FormattedString>
@@ -113,7 +113,7 @@
                                                         HeightRequest="60"
                                                         Margin="60,10,60,0">
                                     <Button.Text>
-                                        <Binding Path="Order.OrderState.Name">
+                                        <Binding Path="Order.OrderState">
                                             <Binding.Converter>
                                                 <conv:OrderStateToTextConverter StateAliases="{StaticResource ButtonStateAliases}"/>
                                             </Binding.Converter>

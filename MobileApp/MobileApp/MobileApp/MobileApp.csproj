@@ -20,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\TDSServer\TDSDTO\TDSDTO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="View\RefuelDialog.xaml.cs">
       <DependentUpon>RefuelDialog.xaml</DependentUpon>
     </Compile>
@@ -44,5 +48,14 @@
     <EmbeddedResource Update="View\OrderPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Local.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Mapster;
+using Mapster.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDSDTO;
+using TDSDTO.Filter;
 using TDSServer.Models;
 using TDSServer.Repositories;
 using TDSServer.Services;
@@ -28,21 +31,23 @@ namespace TDSServer.Controllers
 
         [HttpGet("employee/{employeeId}")]
         [Authorize(Roles = "OrderRead")]
-        public async Task<ApiResult<IEnumerable<Order>>> GetOrdersByEmployee(int employeeId) => 
-            new ApiResult<IEnumerable<Order>>
+        public async Task<ApiResult<List<DTO.Order>>> GetOrdersByEmployee(int employeeId)
+        {
+            try
             {
-                Result = await dbContext.Orders
-                .Where(x => x.DriverId == employeeId)
-                .Include(x => x.Material)
-                .Include(x => x.Supplier)
-                .Include(x => x.Customer)
-                .AsNoTracking()
-                .ToListAsync()
-            };
+                return ApiResult(await GetAllOrders()
+                    .Where(x => x.DriverId == employeeId)
+                    .ToListAsync());
+            }
+            catch(Exception ex)
+            {
+                return ApiResult<List<DTO.Order>>(null, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
+        }
 
         [HttpGet("current")]
         [Authorize(Roles = "OrderRead")]
-        public async Task<ApiResult<Order>> GetDriverCurrentOrder()
+        public async Task<ApiResult<DTO.Order>> GetDriverCurrentOrder()
         {
             if(int.TryParse(HttpContext.User.Identity.Name, out int userId))
             {
@@ -57,9 +62,29 @@ namespace TDSServer.Controllers
                     .Where(x => x.OrderState.Name != OrderStates.Completed && x.Driver != null && x.Driver.UserId == userId)
                     .OrderBy(x => x.Number)
                     .FirstOrDefaultAsync();
-                return new ApiResult<Order>(order);
+                return ApiResult<DTO.Order>(
+                    new DTO.Order
+                    {
+                        Id = order.Id,
+                        Date = order.Date,
+                        Number = order.Number,
+                        DateCreate = order.DateCreate,
+                        Volume = order.Volume,
+                        CustomerId = order.CustomerId,
+                        CustomerName = order.Customer.Name,
+                        SupplierId = order.SupplierId,
+                        SupplierName = order.Supplier.Name,
+                        MaterialId = order.MaterialId,
+                        MaterialName = order.Material.Name,
+                        DriverId = order.DriverId,
+                        DriverName = order.Driver.Name,
+                        IsDeleted = order.IsDeleted,
+                        OrderStateId = order.OrderStateId,
+                        OrderStateName = order.OrderState.FullName,
+                        OrderState = (DTO.OrderStates)order.OrderState.Name
+                    });
             }
-            return ApiResult<Order>(default, "Не удалось определить идентификатор пользователя!");
+            return ApiResult<DTO.Order>(default, "Не удалось определить идентификатор пользователя!");
         }
 
         [HttpPost("{id}")]
@@ -100,35 +125,7 @@ namespace TDSServer.Controllers
             try
             {
                 return ApiResult(await 
-                    dbContext
-                    .Orders
-                    .Include(x => x.Customer)
-                    .Include(x => x.Supplier)
-                    .Include(x => x.Material)
-                    .Include(x => x.OrderState)
-                    .Include(x => x.Driver)
-                    .OrderBy(x => x.Date)
-                    .ThenBy(x => x.Number)
-                    .ThenBy(x => x.Id)
-                    .Select(x => new DTO.Order
-                    {
-                        Id = x.Id,
-                        Date = x.Date,
-                        Number = x.Number,
-                        DateCreate = x.DateCreate,
-                        Volume = x.Volume,
-                        CustomerId = x.CustomerId,
-                        CustomerName = x.Customer.Name,
-                        SupplierId = x.SupplierId,
-                        SupplierName = x.Supplier.Name,
-                        MaterialId = x.MaterialId,
-                        MaterialName = x.Material.Name,
-                        DriverId = x.DriverId,
-                        DriverName = x.Driver.Name,
-                        IsDeleted = x.IsDeleted,
-                        OrderStateId = x.OrderStateId,
-                        OrderStateName = x.OrderState.FullName
-                    })
+                    GetAllOrders()
                     .AsNoTracking()
                     .ToListAsync());
             }
@@ -221,5 +218,37 @@ namespace TDSServer.Controllers
                         });
             }
         }
+
+        private IQueryable<DTO.Order> GetAllOrders()
+            => dbContext
+                    .Orders
+                    .Include(x => x.Customer)
+                    .Include(x => x.Supplier)
+                    .Include(x => x.Material)
+                    .Include(x => x.OrderState)
+                    .Include(x => x.Driver)
+                    .OrderBy(x => x.Date)
+                    .ThenBy(x => x.Number)
+                    .ThenBy(x => x.Id)
+                    .Select(x => new DTO.Order
+                    {
+                        Id = x.Id,
+                        Date = x.Date,
+                        Number = x.Number,
+                        DateCreate = x.DateCreate,
+                        Volume = x.Volume,
+                        CustomerId = x.CustomerId,
+                        CustomerName = x.Customer.Name,
+                        SupplierId = x.SupplierId,
+                        SupplierName = x.Supplier.Name,
+                        MaterialId = x.MaterialId,
+                        MaterialName = x.Material.Name,
+                        DriverId = x.DriverId,
+                        DriverName = x.Driver.Name,
+                        IsDeleted = x.IsDeleted,
+                        OrderStateId = x.OrderStateId,
+                        OrderStateName = x.OrderState.FullName,
+                        OrderState = (DTO.OrderStates)x.OrderState.Name
+                    });
     }
 }

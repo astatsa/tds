@@ -28,5 +28,14 @@ namespace TDSDTO.Documents
         public int OrderStateId { get; set; }
         [DisplayFormat("Статус")]
         public string OrderStateName { get; set; }
+        public OrderStates OrderState { get; set; }
+    }
+
+    public enum OrderStates
+    {
+        New,
+        Viewed,
+        Loaded,
+        Completed
     }
 }

@@ -1,9 +1,9 @@
 ﻿using MobileApp.Api;
-using MobileApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using TDSDTO.Documents;
 using Xamarin.Forms;
 
 namespace MobileApp.ViewModel

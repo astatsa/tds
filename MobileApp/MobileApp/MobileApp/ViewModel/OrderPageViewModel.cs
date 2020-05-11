@@ -1,5 +1,4 @@
-﻿using MobileApp.Models;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +14,7 @@ using System.ComponentModel;
 using XF.Material.Forms.UI.Dialogs;
 using Unity;
 using XF.Material.Forms.UI;
+using TDSDTO.Documents;
 
 namespace MobileApp.ViewModel
 {
@@ -26,7 +26,9 @@ namespace MobileApp.ViewModel
             get => order;
             set
             {
-                SetProperty(ref order, value);
+                //SetProperty(ref order, value);
+                order = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -52,9 +54,9 @@ namespace MobileApp.ViewModel
 
         public ICommand ChangeStateCommand => new DelegateCommand(async () =>
             {
-                if (Order.OrderState.Name < OrderStates.Completed)
+                if (Order.OrderState < OrderStates.Completed)
                 {
-                    if (await SetState(Order.OrderState.Name + 1))
+                    if (await SetState(Order.OrderState + 1))
                     {
                         RefreshOrder();
                     }
@@ -84,7 +86,7 @@ namespace MobileApp.ViewModel
                     {
                         var apiResult = await api.AddRefuel(new Refuel
                         {
-                            GasStation = vm.SelectedGasStation,
+                            GasStationId = vm.SelectedGasStation.Id,
                             Volume = vm.Volume
                         });
                         if(apiResult.Error != null)
@@ -143,13 +145,6 @@ namespace MobileApp.ViewModel
                     return;
                 }
 
-                if(isForeground && result.Result != null && result.Result.OrderState.Name == OrderStates.New)
-                {
-                    if(await SetState(OrderStates.Viewed, result.Result))
-                    {
-                        result.Result.OrderState.Name = OrderStates.Viewed;
-                    }
-                }
                 Order = result.Result;
             }
             catch (Exception ex)
@@ -201,22 +196,22 @@ namespace MobileApp.ViewModel
             return true;
         }
 
-        private bool isForeground = true;
-        public async void OnResume()
+        //private bool isForeground = true;
+        public void OnResume()
         {
-            isForeground = true;
-            if(Order != null && Order.OrderState.Name == OrderStates.New)
+            /*isForeground = true;
+            if(Order != null && Order.OrderState == OrderStates.New)
             {
                 if(await SetState(OrderStates.Viewed))
                 {
                     RefreshOrder();
                 }
-            }
+            }*/
         }
 
         public void OnSleep()
         {
-            isForeground = false;
+            //isForeground = false;
         }
     }
 }

@@ -21,7 +21,6 @@ namespace MobileApp
 
         public App(IPlatformInitializer platformInitializer) : base(platformInitializer)
         {
-
         }
 
         protected override void OnInitialized()

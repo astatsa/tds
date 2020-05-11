@@ -1,5 +1,4 @@
 ﻿using MobileApp.Api;
-using MobileApp.Models;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
@@ -9,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
+using TDSDTO.References;
 using XF.Material.Forms.UI.Dialogs;
 
 namespace MobileApp.ViewModel
