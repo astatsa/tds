@@ -60,7 +60,7 @@ namespace TDSServer.Repositories
                             Rest = x.Rest - y.Quantity
                         }))
                     {
-                        dbContext.Attach(rest).Property(x => x.Rest).IsModified = true;
+                        dbContext.Entry(rest).Property(x => x.Rest).IsModified = true;
                     }
                 });
         }
@@ -68,6 +68,11 @@ namespace TDSServer.Repositories
         public void AddCounterpartyMaterialMovements<TDoc>(TDoc document, IEnumerable<CounterpartyMaterialMvt> movements) where TDoc : DocumentBaseModel
         {
             AddMovements<CounterpartyMaterialMvt, TDoc>(document, movements);
+
+            foreach(var e in dbContext.ChangeTracker.Entries<CounterpartyMaterialRest>().ToList())
+            {
+                e.State = EntityState.Detached;
+            }
 
             foreach (var r in movements
                     .GroupJoin(dbContext.CounterpartyMaterialRests.AsNoTracking(), 
@@ -86,7 +91,7 @@ namespace TDSServer.Repositories
                             }
                         }))
             {
-                var entry = dbContext.Attach(r.Entity);
+                var entry = dbContext.Entry(r.Entity);
                 entry.State = r.State;
                 if (r.State == EntityState.Unchanged)
                     entry.Property(x => x.Rest).IsModified = true;

@@ -30,5 +30,9 @@ namespace TDSServer.Models
         public int OrderStateId { get; set; }
         [ForeignKey("OrderStateId")]
         public OrderState OrderState { get; set; }
+        public double LoadedVolume { get; set; }
+        public double UnloadedVolume { get; set; }
+        public DateTime? LoadedDate { get; set; }
+        public DateTime? UnloadedDate { get; set; }
     }
 }

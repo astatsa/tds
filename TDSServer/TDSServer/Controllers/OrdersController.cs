@@ -89,33 +89,48 @@ namespace TDSServer.Controllers
 
         [HttpPost("{id}")]
         [Authorize(Roles = "MobileApp")]
-        public async Task<ApiResult<bool>> SetState(int id, [FromBody] OrderStates state)
+        public async Task<ApiResult<bool>> SetStateAndWeight(int id, [FromBody] OrderWeightAndState data)
         {
-            var order = await dbContext
-                .Orders
-                .FirstOrDefaultAsync(x => x.Id == id);
-            if (order == null)
-                return ApiResult<bool>(false, $"Заявка с id={id} не найдена!");
-
-            order.OrderState = await dbContext.OrderStates.FirstAsync(x => x.Name == state);
-
-            //await dbContext.SaveChangesAsync();
-
-            int.TryParse(HttpContext.User.Identity.Name, out int userId);
-            dbContext.OrderStateHistories.Add(new OrderStateHistory
+            try
             {
-                Date = DateTime.Now,
-                Order = order,
-                OrderState = order.OrderState,
-                UserId = userId
-            });
+                var order = await dbContext
+                    .Orders
+                    .FirstOrDefaultAsync(x => x.Id == id);
+                if (order == null)
+                    return ApiResult(false, $"Заявка с id={id} не найдена!");
+                OrderStates modelOrderState = (OrderStates)data.OrderState;
+                order.OrderState = await dbContext.OrderStates.FirstOrDefaultAsync(x => x.Name == modelOrderState);
+                if (order.OrderState.Name == OrderStates.Loaded)
+                {
+                    order.LoadedVolume = data.Weight;
+                    order.LoadedDate = DateTime.Now;
+                }
+                else if (order.OrderState.Name == OrderStates.Completed)
+                {
+                    order.UnloadedVolume = data.Weight;
+                    order.UnloadedDate = DateTime.Now;
+                }
 
-            //Изменение остатков материала
-            AddMovements(order);
+                //await dbContext.SaveChangesAsync();
 
-            await dbContext.SaveChangesAsync();
+                int.TryParse(HttpContext.User.Identity.Name, out int userId);
+                dbContext.OrderStateHistories.Add(new OrderStateHistory
+                {
+                    Date = DateTime.Now,
+                    Order = order,
+                    OrderState = order.OrderState,
+                    UserId = userId
+                });
 
-            return ApiResult<bool>(true);
+                //Изменение остатков материала
+                await AddMovementsAsync(order);
+
+                return ApiResult(true);
+            }
+            catch(Exception ex)
+            {
+                return ApiResult(false, $"{ex.Message}\n{ex.InnerException?.Message}");
+            }
         }
 
         [HttpGet]
@@ -166,19 +181,16 @@ namespace TDSServer.Controllers
                 {
                     orderModel.Number = await dbContext.Orders.MaxAsync(x => x.Number) + 1;
                 }
-                if(orderModel.OrderState == null)
-                {
-                    orderModel.OrderState = 
-                        orderModel.OrderStateId != default ? 
-                        dbContext.OrderStates.FirstOrDefault(x => x.Id == orderModel.OrderStateId) :
-                        dbContext.OrderStates.FirstOrDefault(x => x.Name == OrderStates.New);
-                }
+                orderModel.OrderState = 
+                    orderModel.OrderStateId != default ? 
+                    dbContext.OrderStates.FirstOrDefault(x => x.Id == orderModel.OrderStateId) :
+                    dbContext.OrderStates.FirstOrDefault(x => x.Name == OrderStates.New);
+
                 await dbContext.SaveChangesAsync();
 
                 //Запись движений
-                AddMovements(orderModel);
+                await AddMovementsAsync(orderModel);
 
-                await dbContext.SaveChangesAsync();
                 dbContext.Database.CommitTransaction();
             }
             catch(Exception ex)
@@ -189,17 +201,16 @@ namespace TDSServer.Controllers
             return ApiResult(true);
         }
 
-        protected override void BeforeDelete(Order model)
+        protected override Task BeforeDeleteAsync(Order model)
         {
-            base.BeforeDelete(model);
-            AddMovements(model);
+            return AddMovementsAsync(model);
         }
 
-        private void AddMovements(Order model)
+        private async Task AddMovementsAsync(Order model)
         {
             //Удаление движений документа
             dbRepository.DeleteCounterpartyMaterialMovements(model);
-
+            await dbContext.SaveChangesAsync();
             //Запись движений
 
             var completeId = dbContext.OrderStates.Where(x => x.Name == OrderStates.Completed).Select(x => x.Id).FirstOrDefault();
@@ -213,10 +224,11 @@ namespace TDSServer.Controllers
                                 Date = model.Date,
                                 IsComing = false,
                                 MaterialId = model.MaterialId,
-                                Quantity = -model.Volume
+                                Quantity = -model.LoadedVolume
                             }
                         });
             }
+            await dbContext.SaveChangesAsync();
         }
 
         private IQueryable<DTO.Order> GetAllOrders()
@@ -248,7 +260,11 @@ namespace TDSServer.Controllers
                         IsDeleted = x.IsDeleted,
                         OrderStateId = x.OrderStateId,
                         OrderStateName = x.OrderState.FullName,
-                        OrderState = (DTO.OrderStates)x.OrderState.Name
+                        OrderState = (DTO.OrderStates)x.OrderState.Name,
+                        LoadedDate = x.LoadedDate,
+                        LoadedVolume = x.LoadedVolume,
+                        UnloadedDate = x.UnloadedDate,
+                        UnloadedVolume = x.UnloadedVolume
                     });
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TDSServer.Models;
 using TDSServer.Services;
@@ -33,9 +34,10 @@ namespace TDSServer
         public DbSet<CounterpartyRestCorrection> CounterpartyRestCorrections { get; set; }
         public DbSet<CounterpartyRestCorrectionMaterial> CounterpartyRestCorrectionMaterials { get; set; }
 
-        public AppDbContext(DbContextOptions options) : base(options)
+        private LastEntityChangesService lastEntityChangesService;
+        public AppDbContext(DbContextOptions options, LastEntityChangesService lastEntityChangesService) : base(options)
         {
-            
+            this.lastEntityChangesService = lastEntityChangesService;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -157,5 +159,13 @@ namespace TDSServer
 
             base.OnModelCreating(modelBuilder);
         }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            lastEntityChangesService.EntityChanged(ChangeTracker);
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        public DateTime GetEntityLastChangeDate<TEntity>() => lastEntityChangesService.GetEntityLastChangeDate<TEntity>();
     }
 }

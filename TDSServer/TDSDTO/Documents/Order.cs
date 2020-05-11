@@ -22,8 +22,16 @@ namespace TDSDTO.Documents
         public int DriverId { get; set; }
         [DisplayFormat("Водитель")]
         public string DriverName { get; set; }
-        [DisplayFormat("Объем", horizontalAlignment: Alignments.Right)]
+        [DisplayFormat("Вес заявки", horizontalAlignment: Alignments.Right)]
         public double Volume { get; set; }
+        [DisplayFormat("Вес(загрузка)", horizontalAlignment: Alignments.Right)]
+        public double LoadedVolume { get; set; }
+        [DisplayFormat("Время загрузки", "dd.MM.yyyy HH:mm")]
+        public DateTime? LoadedDate { get; set; }
+        [DisplayFormat("Вес(разгрузка)", horizontalAlignment: Alignments.Right)]
+        public double UnloadedVolume { get; set; }
+        [DisplayFormat("Время разгрузки", "dd.MM.yyyy HH:mm")]
+        public DateTime? UnloadedDate { get; set; }
         public DateTime DateCreate { get; set; }
         public int OrderStateId { get; set; }
         [DisplayFormat("Статус")]

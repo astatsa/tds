@@ -167,17 +167,23 @@ namespace MobileApp.ViewModel
             try
             {
                 CanSave = false;
+                double weight = 0;
                 if(state == OrderStates.Loaded || state == OrderStates.Completed)
                 {
-                    var weight = await MaterialDialog.Instance.InputAsync(message: "Введите вес", 
+                    var sWeight = await MaterialDialog.Instance.InputAsync(message: "Введите вес", 
                         inputPlaceholder: "Вес", dismissiveText: "Отмена",
                         configuration: new XF.Material.Forms.UI.Dialogs.Configurations.MaterialInputDialogConfiguration
                         {
                             InputType = MaterialTextFieldInputType.Numeric
                         });
+                    double.TryParse(sWeight, out weight);
                 }
 
-                var result = await api.SetOrderState(order.Id, state);
+                var result = await api.SetOrderState(order.Id, new TDSDTO.OrderWeightAndState
+                {
+                    OrderState = state,
+                    Weight = weight
+                });
                 if (result.Error != null)
                 {
                     Message = result.Error;

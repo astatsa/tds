@@ -55,19 +55,22 @@ namespace TDSServer.Controllers
             
             try
             {
-                BeforeDelete(entity);
+                dbContext.Database.BeginTransaction();
+                await BeforeDeleteAsync(entity);
                 await dbContext.SaveChangesAsync();
+                dbContext.Database.CommitTransaction();
             }
             catch(Exception ex)
             {
+                dbContext.Database.RollbackTransaction();
                 return ApiResult(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
             return ApiResult(true);
         }
 
-        protected virtual void BeforeDelete(TModel model)
+        protected virtual Task BeforeDeleteAsync(TModel model)
         {
-
+            return Task.CompletedTask;
         }
 
         protected async Task<ApiResult<bool>> Save(TDTO dto)
@@ -100,6 +103,13 @@ namespace TDSServer.Controllers
                 return new ApiResult<bool>(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
             return new ApiResult<bool>(true);
+        }
+
+        [HttpGet("lastchange")]
+        [Authorize]
+        public DateTime GetLastChangeDate()
+        {
+            return dbContext.GetEntityLastChangeDate<TModel>();
         }
     }
 }

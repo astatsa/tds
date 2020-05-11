@@ -62,6 +62,8 @@ namespace TDSServer
             services.AddControllers().AddNewtonsoftJson().AddMvcOptions(x => x.AllowEmptyInputInBodyModelBinding = true);
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<DbRepository>();
+
+            services.AddSingleton<LastEntityChangesService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

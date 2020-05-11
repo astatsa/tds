@@ -22,7 +22,7 @@ namespace MobileApp.Api
         Task<ApiResult<DTO.Documents.Order>> GetCurrentOrder();
 
         [Post("/orders/{orderId}")]
-        Task<ApiResult<bool>> SetOrderState(int orderId, [Body]DTO.Documents.OrderStates state);
+        Task<ApiResult<bool>> SetOrderState(int orderId, [Body]DTO.OrderWeightAndState state);
 
         [Get("/gasstations")]
         Task<ApiResult<ICollection<DTO.References.GasStation>>> GetGasStations();
