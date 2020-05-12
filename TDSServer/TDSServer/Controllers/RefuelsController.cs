@@ -24,7 +24,7 @@ namespace TDSServer.Controllers
 
         [HttpPost]
         [Authorize(Roles = "MobileApp")]
-        public async Task<ApiResult<bool>> AddRefuel([FromBody] Refuel refuel)
+        public async Task<ApiResult<bool>> AddRefuel([FromBody] DTO.Refuel refuel)
         {
             if (!int.TryParse(HttpContext.User.Identity.Name, out int userId))
             {
@@ -40,17 +40,23 @@ namespace TDSServer.Controllers
                 return ApiResult(false, "Не удалось найти сотрудника!");
             }
 
-            refuel.Date = DateTime.Now;
-            refuel.Driver = driver;
-            dbContext.Entry(refuel.GasStation).State = EntityState.Unchanged;
-            dbContext.Refuels.Add(refuel);
+            var refuelModel = await dbContext.Refuels.FirstOrDefaultAsync(x => x.Id == refuel.Id);
+            if(refuelModel == null)
+            {
+                refuelModel = new Refuel();
+                dbContext.Refuels.Add(refuelModel);
+            }
+
+            refuel.Adapt(refuelModel);
+            refuelModel.Date = DateTime.Now;
+            refuelModel.DriverId = driver.Id;
             try
             {
                 await dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                return ApiResult(false, ex.Message);
+                return ApiResult(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
             return ApiResult(true);
         }

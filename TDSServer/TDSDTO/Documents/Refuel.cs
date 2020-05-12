@@ -9,12 +9,12 @@ namespace TDSDTO.Documents
         public int GasStationId { get; set; }
         [DisplayFormat("АЗС")]
         public string GasStationName { get; set; }
-        [DisplayFormat("Дата", "dd.MM.yyyy")]
+        [DisplayFormat("Дата", "dd.MM.yyyy HH:mm")]
         public DateTime Date { get; set; }
         public int DriverId { get; set; }
         [DisplayFormat("Водитель")]
         public string DriverName { get; set; }
-        [DisplayFormat("Объем")]
+        [DisplayFormat("Объем", horizontalAlignment: Alignments.Right)]
         public double Volume { get; set; }
     }
 }
