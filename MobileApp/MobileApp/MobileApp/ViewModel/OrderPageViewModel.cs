@@ -15,6 +15,8 @@ using XF.Material.Forms.UI.Dialogs;
 using Unity;
 using XF.Material.Forms.UI;
 using TDSDTO.Documents;
+using MobileApp.Repositories;
+using MobileApp.Services;
 
 namespace MobileApp.ViewModel
 {
@@ -111,10 +113,13 @@ namespace MobileApp.ViewModel
         }
 
 
-        public OrderPageViewModel(ITdsApi tdsApi, IDialogService dialogService)
+        public OrderPageViewModel(ITdsApi tdsApi, IDialogService dialogService, ApiRepository apiRepository, RepeatFailedMethodService repeatFailedMethodService)
         {
             this.api = tdsApi;
             this.dialogService = dialogService;
+            this.apiRepository = apiRepository;
+
+            repeatFailedMethodService.StartTryMethodsCall();
 
             RefreshCommand.Execute(null);
         }
@@ -131,6 +136,7 @@ namespace MobileApp.ViewModel
 
         private ITdsApi api;
         private readonly IDialogService dialogService;
+        private readonly ApiRepository apiRepository;
 
         private async void RefreshOrder()
         {
@@ -179,7 +185,8 @@ namespace MobileApp.ViewModel
                     double.TryParse(sWeight, out weight);
                 }
 
-                var result = await api.SetOrderState(order.Id, new TDSDTO.OrderWeightAndState
+                await apiRepository.SetOrderState(order.Id, state, weight, true);
+                /*var result = await api.SetOrderState(order.Id, new TDSDTO.OrderWeightAndState
                 {
                     OrderState = state,
                     Weight = weight
@@ -188,7 +195,7 @@ namespace MobileApp.ViewModel
                 {
                     Message = result.Error;
                     return false;
-                }
+                }*/
             }
             catch (Exception ex)
             {

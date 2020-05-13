@@ -63,6 +63,7 @@ namespace TDSServer.Controllers
                     .OrderBy(x => x.Number)
                     .FirstOrDefaultAsync();
                 return ApiResult<DTO.Order>(
+                    order == null ? null :
                     new DTO.Order
                     {
                         Id = order.Id,

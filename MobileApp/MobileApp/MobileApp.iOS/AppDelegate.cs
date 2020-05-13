@@ -24,7 +24,7 @@ namespace MobileApp.iOS
         {
             global::Xamarin.Forms.Forms.Init();
             XF.Material.iOS.Material.Init();
-            LoadApplication(new App());
+            LoadApplication(new App(new PlatformInitializer()));
 
             return base.FinishedLaunching(app, options);
         }

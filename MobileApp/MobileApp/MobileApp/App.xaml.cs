@@ -1,4 +1,6 @@
 ﻿using MobileApp.Api;
+using MobileApp.Repositories;
+using MobileApp.Services;
 using MobileApp.View;
 using MobileApp.ViewModel;
 using Prism;
@@ -8,6 +10,9 @@ using Prism.Unity;
 using Refit;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Unity;
+using Unity.Injection;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -40,6 +45,16 @@ namespace MobileApp
                     }));
 
             containerRegistry.RegisterDialog<RefuelDialog, RefuelDialogViewModel>();
+
+            var container = containerRegistry.GetContainer();
+            container.RegisterFactory<DbRepository>(
+                c =>
+                {
+                    var dbFolder = c.Resolve<IDbFolderService>();
+                    return new DbRepository(dbFolder.GetDbPath("tds.db"));
+                },
+                FactoryLifetime.Singleton);
+            containerRegistry.Register<RepeatFailedMethodService>();
 
             ViewModelLocationProvider.Register<LoginPage, LoginPageViewModel>();
             ViewModelLocationProvider.Register<OrderListPage, OrderListPageViewModel>();
