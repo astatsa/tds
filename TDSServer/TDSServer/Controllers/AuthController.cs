@@ -40,7 +40,10 @@ namespace TDSServer.Controllers
                         UserId = user.Id,
                         PositionId = user.Employee.PositionId,
                         UserName = user.Username
-                    }
+                    },
+                Permissions = user.UserRoles?.SelectMany(x => x.Role.RolePermissions)
+                    .Select(x => x.Permission.Name)
+                    .ToList()
             });
         }
     }

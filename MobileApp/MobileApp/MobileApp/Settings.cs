@@ -8,5 +8,7 @@ namespace MobileApp
     {
         public static string ServerUrl { get; set; } = "http://10.0.2.2:5020/api";
         public static int TimeoutMs { get; set; } = 10000;
+        public static int RepeatFailMethodTimeoutMs { get; set; } = 5000;
+        public static bool RepeatFailedMethod { get; set; } = false;
     }
 }

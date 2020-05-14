@@ -119,7 +119,8 @@ namespace MobileApp.ViewModel
             this.dialogService = dialogService;
             this.apiRepository = apiRepository;
 
-            repeatFailedMethodService.StartTryMethodsCall();
+            //repeatFailedMethodService.StartTryMethodsCall();
+            //repeatFailedMethodService.RepeatAllFailedMethods();
 
             RefreshCommand.Execute(null);
         }
@@ -147,6 +148,7 @@ namespace MobileApp.ViewModel
                 var result = await api.GetCurrentOrder();
                 if (result.Error != null)
                 {
+                    Order = null;
                     Message = result.Error;
                     return;
                 }
