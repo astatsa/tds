@@ -142,6 +142,7 @@ namespace TDSServer.Controllers
             {
                 return ApiResult(await 
                     GetAllOrders()
+                    .OrderBy(x => x.Number)
                     .AsNoTracking()
                     .ToListAsync());
             }

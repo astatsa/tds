@@ -51,12 +51,14 @@ namespace TDSServer
                 new Permission { Id = 5, Name = "OrderEdit", FullName = "Изменение заявок" },
                 new Permission { Id = 6, Name = "RefuelRead", FullName = "Чтение дозаправок" },
                 new Permission { Id = 7, Name = "RefuelEdit", FullName = "Изменение дозаправок" },
-                new Permission { Id = 8, Name = "UserEdit", FullName = "Изменение пользователей" }
+                new Permission { Id = 8, Name = "UserEdit", FullName = "Изменение пользователей" },
+                new Permission { Id = 9, Name = "PositionRead", FullName = "Чтение справочника должностей" }
             };
             var roles = new List<Role>
             {
                 new Role { Id = 1, Name = "Administrator", FullName = "Администратор" },
-                new Role { Id = 2, Name = "Driver", FullName = "Водитель" }
+                new Role { Id = 2, Name = "Driver", FullName = "Водитель" },
+                new Role { Id = 3, Name = "Dispatcher", FullName = "Диспетчер" }
             };
 
             //Permission
@@ -79,6 +81,25 @@ namespace TDSServer
                     roles
                     .Where(r => r.Id == 1)
                     .Join(permissions, k => 1, k => 1, (r, p) => new RolePermission { RoleId = r.Id, PermissionId = p.Id })
+                );
+
+            modelBuilder
+                .Entity<RolePermission>()
+                .HasData(new RolePermission
+                {
+                    RoleId = 2,
+                    PermissionId = 1
+                });
+
+            modelBuilder
+                .Entity<RolePermission>()
+                .HasData(
+                    new RolePermission { RoleId = 3, PermissionId = 2 },
+                    new RolePermission { RoleId = 3, PermissionId = 3 },
+                    new RolePermission { RoleId = 3, PermissionId = 4 },
+                    new RolePermission { RoleId = 3, PermissionId = 5 },
+                    new RolePermission { RoleId = 3, PermissionId = 6 },
+                    new RolePermission { RoleId = 3, PermissionId = 9 }
                 );
 
             //User
@@ -156,6 +177,17 @@ namespace TDSServer
             modelBuilder
                 .Entity<CounterpartyMaterialMvt>()
                 .HasKey(x => new { x.RegistratorTypeId, x.RegistratorId, x.CounterpartyId, x.MaterialId });
+
+            //Measure
+            modelBuilder
+                .Entity<Measure>()
+                .HasData(new Measure { Id = 1, Name = "т", FullName = "тонны" });
+
+            //Material
+            modelBuilder
+                .Entity<Material>()
+                .Property(x => x.MeasureId)
+                .HasDefaultValue(1);
 
             base.OnModelCreating(modelBuilder);
         }

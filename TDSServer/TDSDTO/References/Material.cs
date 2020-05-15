@@ -9,7 +9,7 @@ namespace TDSDTO.References
     {
         [DisplayFormat("Наименование")]
         public string Name { get; set; }
-        [DisplayFormat("Ед. изм.")]
+        //[DisplayFormat("Ед. изм.")]
         public string MeasureName { get; set; }
         public int MeasureId { get; set; }
         public string Description { get; set; }

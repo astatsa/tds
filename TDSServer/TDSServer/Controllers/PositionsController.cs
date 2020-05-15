@@ -23,7 +23,7 @@ namespace TDSServer.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "ReferenceRead")]
+        [Authorize(Roles = "PositionRead")]
         public async Task<ApiResult<List<DTO.Position>>> GetPositions()
         {
             try
@@ -40,7 +40,7 @@ namespace TDSServer.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "ReferenceEdit")]
+        [Authorize(Roles = "PositionEdit")]
         public Task<ApiResult<bool>> SavePosition([FromBody] DTO.Position position)
             => Save(position);
     }

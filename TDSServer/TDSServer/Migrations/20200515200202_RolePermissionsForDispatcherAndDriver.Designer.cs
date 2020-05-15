@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TDSServer;
 
 namespace TDSServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200515200202_RolePermissionsForDispatcherAndDriver")]
+    partial class RolePermissionsForDispatcherAndDriver
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,9 +256,7 @@ namespace TDSServer.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<int>("MeasureId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
@@ -286,15 +286,6 @@ namespace TDSServer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Measures");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FullName = "тонны",
-                            IsDeleted = false,
-                            Name = "т"
-                        });
                 });
 
             modelBuilder.Entity("TDSServer.Models.Order", b =>
@@ -526,13 +517,6 @@ namespace TDSServer.Migrations
                             FullName = "Изменение пользователей",
                             IsDeleted = false,
                             Name = "UserEdit"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            FullName = "Чтение справочника должностей",
-                            IsDeleted = false,
-                            Name = "PositionRead"
                         });
                 });
 
@@ -704,11 +688,6 @@ namespace TDSServer.Migrations
                         },
                         new
                         {
-                            PermissionId = 9,
-                            RoleId = 1
-                        },
-                        new
-                        {
                             PermissionId = 1,
                             RoleId = 2
                         },
@@ -735,11 +714,6 @@ namespace TDSServer.Migrations
                         new
                         {
                             PermissionId = 6,
-                            RoleId = 3
-                        },
-                        new
-                        {
-                            PermissionId = 9,
                             RoleId = 3
                         });
                 });
