@@ -192,10 +192,24 @@ namespace TDSServer
             base.OnModelCreating(modelBuilder);
         }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            lastEntityChangesService.EntityChanged(ChangeTracker);
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            var changedEntities = ChangeTracker.Entries()
+                .Where(
+                    x =>
+                    (x.State == EntityState.Modified
+                    || x.State == EntityState.Added
+                    || x.State == EntityState.Deleted)
+                    && x.Metadata.ClrType != null)
+                .Select(x => x.Metadata.ClrType.FullName)
+                .Distinct()
+                .ToArray();
+            int res = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            if(res > 0)
+            {
+                lastEntityChangesService.EntityChanged(changedEntities);
+            }
+            return res;
         }
 
         public DateTime GetEntityLastChangeDate<TEntity>() => lastEntityChangesService.GetEntityLastChangeDate<TEntity>();

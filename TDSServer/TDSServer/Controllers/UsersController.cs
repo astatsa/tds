@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDSDTO;
+using TDSServer.Models;
 using DTO = TDSDTO.References;
 
 namespace TDSServer.Controllers
@@ -48,25 +49,54 @@ namespace TDSServer.Controllers
 
         [HttpPost]
         [Authorize(Roles = "UserEdit")]
-        public Task<ApiResult<bool>> SaveUsers([FromBody] DTO.User user)
+        public async Task<ApiResult<bool>> SaveUsers([FromBody] DTO.User user)
         {
             dbContext.Database.BeginTransaction();
             try
             {
-                var res = Save(user);
-                if (!res.Result)
-                    return res;
+                User model;
+                if (user.Id != default)
+                {
+                    model = await dbContext
+                        .Users
+                        .FirstOrDefaultAsync(x => x.Id == user.Id);
+                    if (model == null)
+                    {
+                        return new ApiResult<bool>(false, "Элемент справочника не найден!");
+                    }
 
-                dbContext.UserRoles.RemoveRange()
-                
+                    //Удаляем все роли пользователя
+                    dbContext.RemoveRange(
+                        dbContext.UserRoles.Where(x => x.UserId == user.Id));
+                }
+                else
+                {
+                    model = new User();
+                    dbContext.Add(model);
+                }
+
+                var pass = model.PasswordHash;
+                user.Adapt(model);
+                if (user.PasswordHash == null)
+                    model.PasswordHash = pass;
+                await dbContext.SaveChangesAsync();
+
+                dbContext.UserRoles.Add(
+                    new UserRole
+                    {
+                        RoleId = user.RoleId,
+                        UserId = model.Id
+                    });
+
+                await dbContext.SaveChangesAsync();
                 dbContext.Database.CommitTransaction();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 dbContext.Database.RollbackTransaction();
-                return ApiResult(false, $"{ex.Message}\n{ex.InnerException?.Message}");
+                return new ApiResult<bool>(false, $"{ex.Message}\n{ex.InnerException?.Message}");
             }
-            
+            return new ApiResult<bool>(true);            
         }
     }
 }

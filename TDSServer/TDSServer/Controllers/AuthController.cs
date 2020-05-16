@@ -33,7 +33,7 @@ namespace TDSServer.Controllers
             return Ok(new 
             { 
                 Token = token,
-                Employee = new TDSDTO.References.Employee
+                Employee = user.Employee == null ? null : new TDSDTO.References.Employee
                     {
                         Name = user.Employee.Name,
                         FullName = user.Employee.FullName,
@@ -43,7 +43,8 @@ namespace TDSServer.Controllers
                     },
                 Permissions = user.UserRoles?.SelectMany(x => x.Role.RolePermissions)
                     .Select(x => x.Permission.Name)
-                    .ToList()
+                    .ToList(),
+                UserFullName = user.FullName
             });
         }
     }

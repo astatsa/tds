@@ -11,17 +11,9 @@ namespace TDSServer.Services
     {
         private Dictionary<string, DateTime> entityChanges = new Dictionary<string, DateTime>();
 
-        public void EntityChanged(ChangeTracker changeTracker)
+        public void EntityChanged(ICollection<string> changedEntities)
         {
-            foreach(var e in changeTracker.Entries()
-                .Where(
-                    x =>
-                    (x.State == EntityState.Modified
-                    || x.State == EntityState.Added
-                    || x.State == EntityState.Deleted)
-                    && x.Metadata.ClrType != null)
-                .Select(x => x.Metadata.ClrType.FullName)
-                .Distinct())
+            foreach(var e in changedEntities)
             {
                 entityChanges[e] = DateTime.Now;
             }
