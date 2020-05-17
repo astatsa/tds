@@ -15,7 +15,7 @@ namespace TDSServer.Services
         {
             foreach(var e in changedEntities)
             {
-                entityChanges[e] = DateTime.Now;
+                entityChanges[e] = DateTime.UtcNow;
             }
         }
 

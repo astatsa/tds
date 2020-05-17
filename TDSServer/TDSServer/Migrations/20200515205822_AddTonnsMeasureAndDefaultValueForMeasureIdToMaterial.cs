@@ -17,9 +17,9 @@ namespace TDSServer.Migrations
             migrationBuilder.Sql(@"
                 INSERT IGNORE INTO Measures
                 SET Id = 1,
-                    Name = ""т"",
-                    FullName = ""тонны"",
-                    IsDeleted = 0
+                    Name = 'т',
+                    FullName = 'тонны',
+                    IsDeleted = 0;
             ");
         }
 

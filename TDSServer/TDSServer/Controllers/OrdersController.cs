@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Mapster;
 using Mapster.Utils;
@@ -181,7 +182,10 @@ namespace TDSServer.Controllers
                 order.Adapt(orderModel);
                 if(orderModel.Number == default)
                 {
-                    orderModel.Number = await dbContext.Orders.MaxAsync(x => x.Number) + 1;
+                    orderModel.Number = (await dbContext
+                        .Orders
+                        .Select(x => (int?)x.Number)
+                        .MaxAsync()) ?? 0 + 1;
                 }
                 orderModel.OrderState = 
                     orderModel.OrderStateId != default ? 

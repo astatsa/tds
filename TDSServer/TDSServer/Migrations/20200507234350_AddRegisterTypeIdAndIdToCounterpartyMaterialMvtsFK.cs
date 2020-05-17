@@ -6,7 +6,7 @@ namespace TDSServer.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"ALTER TABLE `tds`.`counterpartymaterialmvts` 
+            migrationBuilder.Sql(@"ALTER TABLE `CounterpartyMaterialMvts` 
                                    DROP PRIMARY KEY,
                                    ADD PRIMARY KEY (`CounterpartyId`, `MaterialId`, `RegistratorTypeId`, `RegistratorId`);");
 
@@ -30,7 +30,7 @@ namespace TDSServer.Migrations
             //migrationBuilder.DropPrimaryKey(
             //    name: "PK_CounterpartyMaterialMvts",
             //    table: "CounterpartyMaterialMvts");
-            migrationBuilder.Sql(@"ALTER TABLE `tds`.`counterpartymaterialmvts` 
+            migrationBuilder.Sql(@"ALTER TABLE `CounterpartyMaterialMvts` 
                                    DROP PRIMARY KEY,
                                    ADD PRIMARY KEY (`CounterpartyId`, `MaterialId`);");
 
