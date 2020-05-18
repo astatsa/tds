@@ -185,8 +185,13 @@ namespace TDSServer.Controllers
                     orderModel.Number = (await dbContext
                         .Orders
                         .Select(x => (int?)x.Number)
-                        .MaxAsync()) ?? 0 + 1;
+                        .MaxAsync() ?? 0) + 1;
                 }
+                if(order.Date == null)
+                {
+                    orderModel.Date = DateTime.Now;
+                }
+
                 orderModel.OrderState = 
                     orderModel.OrderStateId != default ? 
                     dbContext.OrderStates.FirstOrDefault(x => x.Id == orderModel.OrderStateId) :

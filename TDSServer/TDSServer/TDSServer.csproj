@@ -15,6 +15,8 @@
     <Compile Remove="Migrations\20200505225647_CounterpartyRestTotal.Designer.cs" />
     <Compile Remove="Migrations\20200511174636_OrderLoadedUnloadedVolumeAndDate.cs" />
     <Compile Remove="Migrations\20200511174636_OrderLoadedUnloadedVolumeAndDate.Designer.cs" />
+    <Compile Remove="Migrations\20200518140500_FixSqlSyntaxErrorInAddTons.cs" />
+    <Compile Remove="Migrations\20200518140500_FixSqlSyntaxErrorInAddTons.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
