@@ -224,8 +224,11 @@ namespace TDSServer.Controllers
             await dbContext.SaveChangesAsync();
             //Запись движений
 
-            var stateIdForMove = dbContext.OrderStates.Where(x => x.Name == OrderStates.Loaded).Select(x => x.Id).FirstOrDefault();
-            if (model.OrderStateId == stateIdForMove  && !model.IsDeleted)
+            var state = dbContext.OrderStates
+                .Where(x => x.Id == model.OrderStateId)
+                .Select(x => x.Name)
+                .FirstOrDefault();
+            if (state >= OrderStates.Loaded  && !model.IsDeleted)
             {
                 dbRepository.AddCounterpartyMaterialMovements(model, new[]
                         {

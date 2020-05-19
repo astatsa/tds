@@ -8,9 +8,9 @@ using System.Text;
 
 namespace MobileApp.Repositories
 {
-    class DbRepository
+    class DbRepository : IDisposable
     {
-        private SQLiteConnection db;
+        private readonly SQLiteConnection db;
         public DbRepository(string path)
         {
             db = new SQLiteConnection(path);
@@ -50,5 +50,10 @@ namespace MobileApp.Repositories
 
         public void DeleteFailedMethod(int id)
             => db.Delete<FailedMethodCall>(id);
+
+        public void Dispose()
+        {
+            db.Dispose();
+        }
     }
 }

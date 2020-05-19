@@ -100,7 +100,7 @@
                                         <FormattedString>
                                             <Span Text="{Binding Order.MaterialName}"/>
                                             <Span Text="{Binding Order.Volume, StringFormat=' {0} '}"/>
-                                            <Span Text="{Binding Order.Material.Measure}"/>
+                                            <Span Text="т."/>
                                         </FormattedString>
                                     </material:MaterialLabel.FormattedText>
                                 </material:MaterialLabel>

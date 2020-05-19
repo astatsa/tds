@@ -1,12 +1,28 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>    
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <StackLayout xmlns="http://xamarin.com/schemas/2014/forms"
-                xmlns:prism="http://prismlibrary.com"
-                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
-                xmlns:conv="clr-namespace:MobileApp.Converters"
-                prism:ViewModelLocator.AutowireViewModel="True"
-                x:Class="MobileApp.View.RefuelDialog"
-                Orientation="Vertical" Spacing="15" >
+             xmlns:prism="http://prismlibrary.com"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material"
+             xmlns:conv="clr-namespace:MobileApp.Converters"
+             xmlns:dlg="clr-namespace:XF.Material.Forms.UI.Dialogs;assembly=XF.Material"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="MobileApp.View.RefuelDialog"
+             Orientation="Vertical" Spacing="15">
+    <!--Grid>
+        <Label Text="АЗС" TextColor="Gray" VerticalOptions="Fill" Margin="10" FontSize="16">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Setter Property="IsVisible" Value="False"/>
+                    <Style.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding SelectedItem, Source={Reference GasStation}}" Value="{x:Null}">
+                            <Setter Property="IsVisible" Value="True"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+        </Label>
+        <Picker x:Name="GasStation" ItemsSource="{Binding GasStations}" ItemDisplayBinding="{Binding Name}"/>
+    </-->
     <material:MaterialTextField InputType="Choice"
                                 Placeholder="АЗС"
                                 FloatingPlaceholderEnabled="True"
@@ -14,7 +30,9 @@
                                 ChoicesBindingName="Name"
                                 BackgroundColor="Transparent"
                                 AlwaysShowUnderline="True"
-                                SelectedChoice="{Binding SelectedGasStation}">
+                                SelectedChoice="{Binding SelectedGasStation}"
+                                dlg:MaterialConfirmationDialog.DialogTitle="Выберите АЗС"
+                                dlg:MaterialConfirmationDialog.DialogDismissiveText="Отмена">
         <material:MaterialTextField.Triggers>
             <DataTrigger TargetType="material:MaterialTextField" Binding="{Binding GasStations}" Value="{x:Null}">
                 <Setter Property="IsEnabled" Value="False"/>

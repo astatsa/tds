@@ -33,7 +33,7 @@ namespace TDSServer.Services
                 .ThenInclude(x => x.RolePermissions)
                 .ThenInclude(x => x.Permission)
                 .Include(x => x.Employee)
-                .SingleOrDefaultAsync(u => u.Username == username && u.PasswordHash == passwordHash);
+                .SingleOrDefaultAsync(u => u.Username == username && u.PasswordHash == passwordHash && !u.IsDeleted);
             if(user == null)
             {
                 return (null, null);

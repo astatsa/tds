@@ -17,6 +17,7 @@ using XF.Material.Forms.UI;
 using TDSDTO.Documents;
 using MobileApp.Repositories;
 using MobileApp.Services;
+using System.Runtime.CompilerServices;
 
 namespace MobileApp.ViewModel
 {
@@ -145,15 +146,7 @@ namespace MobileApp.ViewModel
             try
             {
                 CanSave = false;
-                var result = await api.GetCurrentOrder();
-                if (result.Error != null)
-                {
-                    Order = null;
-                    Message = result.Error;
-                    return;
-                }
-
-                Order = result.Result;
+                await LoadOrder();
             }
             catch (Exception ex)
             {
@@ -184,7 +177,16 @@ namespace MobileApp.ViewModel
                         {
                             InputType = MaterialTextFieldInputType.Numeric
                         });
+                    if(String.IsNullOrEmpty(sWeight))
+                    {
+                        return false;
+                    }
                     double.TryParse(sWeight, out weight);
+                    if (weight <= 0)
+                    {
+                        _ = MaterialDialog.Instance.SnackbarAsync("Не указан вес!", MaterialSnackbar.DurationShort);
+                        return false;
+                    }
                 }
 
                 await apiRepository.SetOrderState(order.Id, state, weight, true);
@@ -228,5 +230,45 @@ namespace MobileApp.ViewModel
         {
             //isForeground = false;
         }
+
+        private bool loadOrderRepeaterAlive;
+        private async Task LoadOrder()
+        {
+            try
+            {
+                var result = await api.GetCurrentOrder();
+
+                if (result.Error != null)
+                {
+                    Order = null;
+                    Message = result.Error;
+                    loadOrderRepeaterAlive = false;
+                    return;
+                }
+
+                Order = result.Result;
+                if(Order == null && !loadOrderRepeaterAlive)
+                {
+                    loadOrderRepeaterAlive = true;
+                    await Task.Run(
+                        async () =>
+                        {
+                            while(loadOrderRepeaterAlive)
+                            {
+                                await Task.Delay(10000);
+                                await LoadOrder();
+                            }
+                        });
+                }
+                else if(Order != null)
+                    loadOrderRepeaterAlive = false;
+            }
+            catch(Exception ex)
+            {
+                Message = ex.Message;
+            }
+        }
+
+
     }
 }

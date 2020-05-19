@@ -15,6 +15,7 @@ namespace MobileApp.View
         public RefuelDialog()
         {
             InitializeComponent();
+            
         }
     }
 }

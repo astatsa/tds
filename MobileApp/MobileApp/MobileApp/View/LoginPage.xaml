@@ -33,12 +33,13 @@
                                     Placeholder="Пароль" 
                                     ReturnType="Done"
                                     ReturnCommand="{Binding LoginCommand}"
-                                    IsAutoCapitalizationEnabled="False"
                                     InputType="Password" 
+                                    IsAutoCapitalizationEnabled="False"
                                     Text="{Binding Password}"
                                     AlwaysShowUnderline="True"
                                     BackgroundColor="Transparent"
-                                    FloatingPlaceholderEnabled="true"/>
+                                    FloatingPlaceholderEnabled="true">
+        </material:MaterialTextField>
         <Label Grid.Row="3" Text="{Binding Message}" TextColor="Red" HorizontalTextAlignment="Center"/>
         <material:MaterialButton Grid.Row="4" Text="Войти" HorizontalOptions="FillAndExpand" ButtonType="Outlined" Command="{Binding LoginCommand}"/>
         <ActivityIndicator Grid.Row="5" Color="Blue" IsRunning="{Binding IsLoading}"/>
