@@ -31,7 +31,7 @@ namespace TDSServer.Controllers
         }
 
         [HttpGet("employee/{employeeId}")]
-        [Authorize(Roles = "OrderRead")]
+        [Authorize(Roles = "OrderRead,MobileApp")]
         public async Task<ApiResult<List<DTO.Order>>> GetOrdersByEmployee(int employeeId)
         {
             try
@@ -47,7 +47,7 @@ namespace TDSServer.Controllers
         }
 
         [HttpGet("current")]
-        [Authorize(Roles = "OrderRead")]
+        [Authorize(Roles = "OrderRead,MobileApp")]
         public async Task<ApiResult<DTO.Order>> GetDriverCurrentOrder()
         {
             if(int.TryParse(HttpContext.User.Identity.Name, out int userId))
